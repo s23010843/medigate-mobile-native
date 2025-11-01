@@ -1,0 +1,13 @@
+# Netlify configuration for Expo Web (React Native Web)
+[build]
+  # The command Netlify runs to build your web app
+  command = "npx expo export --platform web"
+
+  # The folder that gets published — check if yours is 'dist' or 'web-build'
+  publish = "dist"
+
+# Ensure client-side routing works correctly
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
