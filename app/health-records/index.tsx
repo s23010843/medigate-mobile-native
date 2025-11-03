@@ -1,6 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
 import { ScrollView, StatusBar, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import BottomNavigation from "../../components/ui/bottom-navigation";
+import Header from "../../components/ui/header";
 
 import "../../global.css";
 
@@ -35,32 +37,10 @@ export default function HealthRecordsScreen() {
                 }}
             />
             <View className="flex-1 bg-gray-50">
-                <StatusBar barStyle="light-content" />
+                <StatusBar barStyle="dark-content" />
                 
                 {/* Header */}
-                <View className="bg-blue-600 px-4 py-6 sm:px-6 sm:py-8 rounded-b-3xl shadow-lg">
-                    <View className="flex-row items-center justify-between mb-4">
-                        <TouchableOpacity 
-                            onPress={() => router.back()}
-                            className="flex-row items-center"
-                            activeOpacity={0.7}
-                        >
-                            <Ionicons name="arrow-back" size={24} color="white" />
-                            <Text className={`${textSize} text-white ml-2 font-semibold`}>
-                                Back
-                            </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity 
-                            className="bg-white/20 rounded-full p-2"
-                            activeOpacity={0.7}
-                        >
-                            <Ionicons name="add" size={24} color="white" />
-                        </TouchableOpacity>
-                    </View>
-                    <Text className={`${titleSize} font-bold text-white`}>
-                        Health Records
-                    </Text>
-                </View>
+                <Header title="Health Records" subtitle="Manage your medical documents" />
 
                 <ScrollView 
                     className={`flex-1 ${containerPadding}`}
@@ -156,6 +136,9 @@ export default function HealthRecordsScreen() {
                         </View>
                     </View>
                 </ScrollView>
+
+                {/* Bottom Navigation */}
+                <BottomNavigation />
             </View>
         </>
     );

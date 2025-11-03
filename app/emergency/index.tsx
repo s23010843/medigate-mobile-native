@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
-import { Linking, ScrollView, StatusBar, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { Alert, Linking, ScrollView, StatusBar, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import BottomNavigation from "../../components/ui/bottom-navigation";
 
 import "../../global.css";
 
@@ -23,6 +24,17 @@ export default function EmergencyScreen() {
 
     const handleEmergencyCall = (number: string) => {
         Linking.openURL(`tel:${number}`);
+    };
+
+    const handleShareLocation = () => {
+        Alert.alert(
+            'Share Location',
+            'Your location will be shared with emergency services.',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'Share', onPress: () => console.log('Location shared') }
+            ]
+        );
     };
 
     const emergencyContacts = [
@@ -144,17 +156,46 @@ export default function EmergencyScreen() {
                         </View>
                     </View>
 
-                    {/* Share Location */}
-                    <TouchableOpacity
-                        className="bg-blue-600 rounded-full py-5 shadow-xl elevation-4 mb-6 flex-row items-center justify-center"
-                        activeOpacity={0.85}
-                    >
-                        <Ionicons name="location" size={smallIconSize} color="white" />
-                        <Text className={`${buttonTextSize} text-white font-bold ml-2`}>
-                            Share My Location
-                        </Text>
-                    </TouchableOpacity>
+                    {/* Map Placeholder */}
+                    <View className="bg-white rounded-3xl overflow-hidden shadow-lg elevation-2 mb-6">
+                        <View className="bg-gray-200 h-48 items-center justify-center">
+                            <Ionicons name="map" size={iconSize} color="#6B7280" />
+                            <Text className={`${textSize} text-gray-600 mt-2`}>
+                                Map View
+                            </Text>
+                        </View>
+                    </View>
+
+                    {/* Action Buttons */}
+                    <View className="gap-3 mb-6">
+                        {/* Share Location Button */}
+                        <TouchableOpacity
+                            onPress={handleShareLocation}
+                            className="bg-blue-600 rounded-full py-5 shadow-xl elevation-4 flex-row items-center justify-center"
+                            activeOpacity={0.85}
+                        >
+                            <Ionicons name="location" size={smallIconSize} color="white" />
+                            <Text className={`${buttonTextSize} text-white font-bold ml-2`}>
+                                Share My Location
+                            </Text>
+                        </TouchableOpacity>
+
+                        {/* Call Emergency Services Button */}
+                        <TouchableOpacity
+                            onPress={() => handleEmergencyCall('911')}
+                            className="bg-red-600 rounded-full py-5 shadow-xl elevation-4 flex-row items-center justify-center"
+                            activeOpacity={0.85}
+                        >
+                            <Ionicons name="call" size={smallIconSize} color="white" />
+                            <Text className={`${buttonTextSize} text-white font-bold ml-2`}>
+                                Call Emergency Services
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
                 </ScrollView>
+
+                {/* Bottom Navigation */}
+                <BottomNavigation />
             </View>
         </>
     );

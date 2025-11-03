@@ -1,12 +1,24 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
-import { ScrollView, StatusBar, Text, TextInput, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { Alert, ScrollView, StatusBar, Text, TextInput, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import Footer from "../../components/ui/footer";
 
 import "../../global.css";
 
 export default function PharmacyScreen() {
     const router = useRouter();
     const { width } = useWindowDimensions();
+
+    const handlePayment = () => {
+        Alert.alert(
+            'Confirm Payment',
+            'Do you want to proceed with the payment settlement?',
+            [
+                { text: 'No', style: 'cancel' },
+                { text: 'Yes', onPress: () => Alert.alert('Success', 'Payment processed successfully!') }
+            ]
+        );
+    };
 
     // Responsive sizing
     const isSmartWatch = width < 250;
@@ -176,6 +188,55 @@ export default function PharmacyScreen() {
                         </View>
                     </View>
 
+                    {/* Payment Settlement Table */}
+                    <View className="bg-white rounded-3xl p-6 shadow-lg elevation-2 mb-6">
+                        <Text className={`${cardTitleSize} font-bold text-gray-900 mb-4`}>
+                            Payment Settlement
+                        </Text>
+                        
+                        <View className="border border-gray-200 rounded-xl overflow-hidden">
+                            {/* Table Header */}
+                            <View className="flex-row bg-gray-100 p-3 border-b border-gray-200">
+                                <Text className={`${textSize} font-bold text-gray-700 flex-1`}>Item</Text>
+                                <Text className={`${textSize} font-bold text-gray-700 w-20 text-right`}>Qty</Text>
+                                <Text className={`${textSize} font-bold text-gray-700 w-24 text-right`}>Amount</Text>
+                            </View>
+                            
+                            {/* Table Rows */}
+                            <View className="p-3 border-b border-gray-200 flex-row">
+                                <Text className={`${textSize} text-gray-900 flex-1`}>Amoxicillin 500mg</Text>
+                                <Text className={`${textSize} text-gray-900 w-20 text-right`}>30</Text>
+                                <Text className={`${textSize} text-gray-900 w-24 text-right`}>$25.00</Text>
+                            </View>
+                            <View className="p-3 border-b border-gray-200 flex-row">
+                                <Text className={`${textSize} text-gray-900 flex-1`}>Vitamin D 2000 IU</Text>
+                                <Text className={`${textSize} text-gray-900 w-20 text-right`}>60</Text>
+                                <Text className={`${textSize} text-gray-900 w-24 text-right`}>$15.00</Text>
+                            </View>
+                            <View className="p-3 border-b border-gray-200 flex-row">
+                                <Text className={`${textSize} text-gray-900 flex-1`}>BP Medication</Text>
+                                <Text className={`${textSize} text-gray-900 w-20 text-right`}>30</Text>
+                                <Text className={`${textSize} text-gray-900 w-24 text-right`}>$40.00</Text>
+                            </View>
+                            
+                            {/* Total */}
+                            <View className="p-3 bg-blue-50 flex-row">
+                                <Text className={`${cardTitleSize} font-bold text-gray-900 flex-1`}>Total</Text>
+                                <Text className={`${cardTitleSize} font-bold text-blue-600 w-24 text-right`}>$80.00</Text>
+                            </View>
+                        </View>
+
+                        <TouchableOpacity
+                            onPress={handlePayment}
+                            className="bg-blue-600 rounded-full py-4 mt-4"
+                            activeOpacity={0.85}
+                        >
+                            <Text className={`${buttonTextSize} text-white text-center font-bold`}>
+                                Proceed to Payment
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+
                     {/* Info Card */}
                     <View className="bg-blue-50 rounded-3xl p-6 shadow-lg elevation-2 mb-6 border border-blue-200">
                         <View className="flex-row items-start">
@@ -191,6 +252,9 @@ export default function PharmacyScreen() {
                         </View>
                     </View>
                 </ScrollView>
+
+                {/* Footer */}
+                <Footer />
             </View>
         </>
     );

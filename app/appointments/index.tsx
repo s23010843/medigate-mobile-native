@@ -1,12 +1,34 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
-import { ScrollView, StatusBar, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { Alert, ScrollView, StatusBar, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import Footer from "../../components/ui/footer";
 
 import "../../global.css";
 
 export default function AppointmentBookingScreen() {
     const router = useRouter();
     const { width } = useWindowDimensions();
+
+    const handleConfirm = () => {
+        Alert.alert(
+            'Appointment Confirmed',
+            'Your appointment has been successfully booked!',
+            [
+                { text: 'OK', onPress: () => router.back() }
+            ]
+        );
+    };
+
+    const handleCancel = () => {
+        Alert.alert(
+            'Cancel Booking',
+            'Are you sure you want to cancel this booking?',
+            [
+                { text: 'No', style: 'cancel' },
+                { text: 'Yes', onPress: () => router.back() }
+            ]
+        );
+    };
 
     // Responsive sizing
     const isSmartWatch = width < 250;
@@ -111,16 +133,34 @@ export default function AppointmentBookingScreen() {
                         </View>
                     </View>
 
-                    {/* Confirm Button */}
-                    <TouchableOpacity
-                        className="bg-blue-600 rounded-full py-5 shadow-xl elevation-4 mb-6"
-                        activeOpacity={0.85}
-                    >
-                        <Text className={`${buttonTextSize} text-white text-center font-bold`}>
-                            Confirm Appointment
-                        </Text>
-                    </TouchableOpacity>
+                    {/* Action Buttons */}
+                    <View className="gap-3 mb-6">
+                        {/* Confirm Button */}
+                        <TouchableOpacity
+                            onPress={handleConfirm}
+                            className="bg-blue-600 rounded-full py-5 shadow-xl elevation-4"
+                            activeOpacity={0.85}
+                        >
+                            <Text className={`${buttonTextSize} text-white text-center font-bold`}>
+                                Confirm Appointment
+                            </Text>
+                        </TouchableOpacity>
+
+                        {/* Cancel Button */}
+                        <TouchableOpacity
+                            onPress={handleCancel}
+                            className="bg-white border-2 border-red-500 rounded-full py-5 shadow-lg elevation-2"
+                            activeOpacity={0.85}
+                        >
+                            <Text className={`${buttonTextSize} text-red-500 text-center font-bold`}>
+                                Cancel
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
                 </ScrollView>
+                
+                {/* Footer */}
+                <Footer />
             </View>
         </>
     );

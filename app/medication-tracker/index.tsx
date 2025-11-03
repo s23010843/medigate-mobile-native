@@ -2,6 +2,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, StatusBar, Switch, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import BottomNavigation from "../../components/ui/bottom-navigation";
+import Header from "../../components/ui/header";
+import SearchBox from "../../components/ui/search-box";
 
 import "../../global.css";
 
@@ -9,6 +12,7 @@ export default function MedicationTrackerScreen() {
     const router = useRouter();
     const { width } = useWindowDimensions();
     const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+    const [searchQuery, setSearchQuery] = useState('');
 
     // Responsive sizing
     const isSmartWatch = width < 250;
@@ -30,6 +34,7 @@ export default function MedicationTrackerScreen() {
             frequency: "3 times daily", 
             time: "8:00 AM", 
             taken: true,
+            available: true,
             color: "bg-blue-500"
         },
         { 
@@ -39,6 +44,7 @@ export default function MedicationTrackerScreen() {
             frequency: "Once daily", 
             time: "9:00 AM", 
             taken: false,
+            available: true,
             color: "bg-orange-500"
         },
         { 
@@ -48,9 +54,14 @@ export default function MedicationTrackerScreen() {
             frequency: "Once daily", 
             time: "8:00 PM", 
             taken: false,
+            available: false,
             color: "bg-green-500"
         }
     ];
+
+    const filteredMedications = medications.filter(med =>
+        med.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     return (
         <>
@@ -61,31 +72,17 @@ export default function MedicationTrackerScreen() {
                 }}
             />
             <View className="flex-1 bg-gray-50">
-                <StatusBar barStyle="light-content" />
+                <StatusBar barStyle="dark-content" />
                 
                 {/* Header */}
-                <View className="bg-blue-600 px-4 py-6 sm:px-6 sm:py-8 rounded-b-3xl shadow-lg">
-                    <View className="flex-row items-center justify-between mb-4">
-                        <TouchableOpacity 
-                            onPress={() => router.back()}
-                            className="flex-row items-center"
-                            activeOpacity={0.7}
-                        >
-                            <Ionicons name="arrow-back" size={24} color="white" />
-                            <Text className={`${textSize} text-white ml-2 font-semibold`}>
-                                Back
-                            </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity 
-                            className="bg-white/20 rounded-full p-2"
-                            activeOpacity={0.7}
-                        >
-                            <Ionicons name="add" size={24} color="white" />
-                        </TouchableOpacity>
-                    </View>
-                    <Text className={`${titleSize} font-bold text-white`}>
-                        Medication Tracker
-                    </Text>
+                <Header title="Medications" subtitle="Track your medication schedule" />
+
+                {/* Search Box */}
+                <View className="px-4 pt-4">
+                    <SearchBox 
+                        placeholder="Search medications..." 
+                        onSearch={setSearchQuery}
+                    />
                 </View>
 
                 <ScrollView 
@@ -135,10 +132,10 @@ export default function MedicationTrackerScreen() {
                     {/* Medications List */}
                     <View className="bg-white rounded-3xl p-6 shadow-lg elevation-2 mb-6">
                         <Text className={`${cardTitleSize} font-bold text-gray-900 mb-4`}>
-                            Today's Schedule
+                            Medications
                         </Text>
                         <View className="gap-4">
-                            {medications.map((med) => (
+                            {filteredMedications.map((med) => (
                                 <View
                                     key={med.id}
                                     className={`rounded-xl p-4 border-2 ${
@@ -161,6 +158,18 @@ export default function MedicationTrackerScreen() {
                                                 } mt-1`}>
                                                     {med.dosage} • {med.frequency}
                                                 </Text>
+                                                <View className="flex-row items-center mt-2">
+                                                    <Ionicons 
+                                                        name={med.available ? "checkmark-circle" : "close-circle"} 
+                                                        size={16} 
+                                                        color={med.available ? "#10B981" : "#EF4444"} 
+                                                    />
+                                                    <Text className={`${textSize} ml-1 ${
+                                                        med.available ? 'text-green-600' : 'text-red-600'
+                                                    }`}>
+                                                        {med.available ? 'Available' : 'Not Available'}
+                                                    </Text>
+                                                </View>
                                             </View>
                                         </View>
                                         {med.taken && (
@@ -176,13 +185,14 @@ export default function MedicationTrackerScreen() {
                                                 {med.time}
                                             </Text>
                                         </View>
-                                        {!med.taken && (
+                                        {!med.taken && med.available && (
                                             <TouchableOpacity
-                                                className="bg-blue-600 px-4 py-2 rounded-full"
+                                                className="bg-blue-600 px-4 py-2 rounded-full flex-row items-center"
                                                 activeOpacity={0.7}
                                             >
-                                                <Text className={`${textSize} text-white font-semibold`}>
-                                                    Mark Taken
+                                                <Ionicons name="add" size={16} color="white" />
+                                                <Text className={`${textSize} text-white font-semibold ml-1`}>
+                                                    Add
                                                 </Text>
                                             </TouchableOpacity>
                                         )}
@@ -203,6 +213,9 @@ export default function MedicationTrackerScreen() {
                         </Text>
                     </TouchableOpacity>
                 </ScrollView>
+
+                {/* Bottom Navigation */}
+                <BottomNavigation />
             </View>
         </>
     );

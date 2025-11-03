@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
 import { ScrollView, StatusBar, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import Footer from "../../components/ui/footer";
 
 import "../../global.css";
 
@@ -175,6 +176,7 @@ export default function DoctorProfileScreen() {
                     {/* Action Buttons */}
                     <View className="flex-row gap-3 mb-6">
                         <TouchableOpacity
+                            onPress={() => router.push('/appointments' as any)}
                             className="flex-1 bg-blue-600 rounded-full py-4 shadow-xl elevation-4"
                             activeOpacity={0.85}
                         >
@@ -190,6 +192,9 @@ export default function DoctorProfileScreen() {
                         </TouchableOpacity>
                     </View>
                 </ScrollView>
+                
+                {/* Footer */}
+                <Footer />
             </View>
         </>
     );

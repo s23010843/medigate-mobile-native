@@ -1,12 +1,33 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
+import { useState } from 'react';
 import { ScrollView, StatusBar, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import BottomNavigation from "../../components/ui/bottom-navigation";
+import Header from "../../components/ui/header";
+import SearchBox from "../../components/ui/search-box";
 
 import "../../global.css";
 
 export default function DashboardScreen() {
     const router = useRouter();
     const { width } = useWindowDimensions();
+    const [searchQuery, setSearchQuery] = useState('');
+
+    // Mock doctor data
+    const doctors = [
+        { id: 1, name: 'Dr. Sarah Johnson', specialty: 'Cardiologist', phone: '+1 234-567-8901', avatar: '👩‍⚕️', lastSeen: 'Online', verified: true },
+        { id: 2, name: 'Dr. Michael Chen', specialty: 'Pediatrician', phone: '+1 234-567-8902', avatar: '👨‍⚕️', lastSeen: 'Last seen 5m ago', verified: true },
+        { id: 3, name: 'Dr. Emily Davis', specialty: 'Dermatologist', phone: '+1 234-567-8903', avatar: '👩‍⚕️', lastSeen: 'Last seen 1h ago', verified: false },
+        { id: 4, name: 'Dr. James Wilson', specialty: 'Orthopedic', phone: '+1 234-567-8904', avatar: '👨‍⚕️', lastSeen: 'Last seen 2h ago', verified: true },
+        { id: 5, name: 'Dr. Linda Martinez', specialty: 'Neurologist', phone: '+1 234-567-8905', avatar: '👩‍⚕️', lastSeen: 'Online', verified: true },
+        { id: 6, name: 'Dr. Robert Taylor', specialty: 'General Physician', phone: '+1 234-567-8906', avatar: '👨‍⚕️', lastSeen: 'Last seen 30m ago', verified: false },
+    ];
+
+    const filteredDoctors = doctors.filter(doctor => 
+        doctor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        doctor.specialty.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        doctor.phone.includes(searchQuery)
+    );
 
     // Responsive sizing
     const isSmartWatch = width < 250;
@@ -23,17 +44,9 @@ export default function DashboardScreen() {
     const containerPadding = isSmartWatch ? 'px-2 py-3' : isMobile ? 'px-4 py-6' : isTablet ? 'px-8 py-8' : isDesktop ? 'px-16 py-12' : 'px-24 py-16';
     const cardPadding = isSmartWatch ? 'p-3' : isMobile ? 'p-4' : isTablet ? 'p-6' : 'p-8';
 
-    const handleLogout = () => {
-        // TODO: Implement actual logout logic
-        router.replace('/' as any);
+    const handleDoctorPress = (doctorId: number) => {
+        router.push(`/doctor-profile?id=${doctorId}` as any);
     };
-
-    const quickActions = [
-        { id: 1, title: 'Book Appointment', icon: 'calendar', color: 'bg-blue-500' },
-        { id: 2, title: 'Medical Records', icon: 'document-text', color: 'bg-green-500' },
-        { id: 3, title: 'Prescriptions', icon: 'medical', color: 'bg-purple-500' },
-        { id: 4, title: 'Messages', icon: 'chatbubbles', color: 'bg-orange-500' },
-    ];
 
     return (
         <>
@@ -47,115 +60,77 @@ export default function DashboardScreen() {
             <StatusBar barStyle="dark-content" />
             
             {/* Header */}
-            <View className="bg-blue-600 px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10 rounded-b-3xl shadow-lg">
-                <View className="flex-row items-center justify-between mb-4 sm:mb-6">
-                    <View>
-                        <Text className={`${titleSize} font-bold text-white`}>
-                            {isSmartWatch ? 'Dashboard' : 'Welcome Back'}
-                        </Text>
-                        {!isSmartWatch && (
-                            <Text className={`${subtitleSize} text-blue-100 mt-1`}>
-                                How can we help you today?
-                            </Text>
-                        )}
-                    </View>
-                    <TouchableOpacity 
-                        onPress={handleLogout}
-                        className="bg-white/20 rounded-full p-2 sm:p-3"
-                        activeOpacity={0.7}
-                    >
-                        <Ionicons name="log-out-outline" size={isSmartWatch ? 18 : 24} color="white" />
-                    </TouchableOpacity>
-                </View>
+            <Header title="Doctors" subtitle="Find and connect with doctors" />
+
+            {/* Search Box */}
+            <View className="px-4 pt-4">
+                <SearchBox 
+                    placeholder="Search doctors, specialties, or phone..." 
+                    onSearch={setSearchQuery}
+                />
             </View>
 
+            {/* Doctor List - WhatsApp-like UI */}
             <ScrollView 
-                className={`flex-1 ${containerPadding}`}
+                className="flex-1"
                 showsVerticalScrollIndicator={false}
             >
-                {/* Quick Actions */}
-                <View className="mb-6 sm:mb-8">
-                    <Text className={`${cardTitleSize} font-bold text-gray-900 mb-4`}>
-                        Quick Actions
-                    </Text>
-                    <View className="flex-row flex-wrap gap-3 sm:gap-4">
-                        {quickActions.map((action) => (
-                            <TouchableOpacity
-                                key={action.id}
-                                className={`${action.color} rounded-2xl ${cardPadding} items-center justify-center shadow-md elevation-4 flex-1 min-w-[40%] sm:min-w-[45%] md:min-w-[22%]`}
-                                activeOpacity={0.8}
-                            >
-                                <Ionicons name={action.icon as any} size={iconSize} color="white" />
-                                <Text className={`${textSize} text-white font-semibold text-center mt-2 sm:mt-3`}>
-                                    {action.title}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-                </View>
-
-                {/* Upcoming Appointments */}
-                <View className="mb-6 sm:mb-8">
-                    <Text className={`${cardTitleSize} font-bold text-gray-900 mb-4`}>
-                        Upcoming Appointments
-                    </Text>
-                    <View className="bg-white rounded-2xl p-4 sm:p-6 shadow-md elevation-2">
-                        <View className="items-center justify-center py-8 sm:py-12">
-                            <Ionicons name="calendar-outline" size={iconSize} color="#9CA3AF" />
-                            <Text className={`${textSize} text-gray-500 mt-3 text-center`}>
-                                No upcoming appointments
-                            </Text>
-                            <TouchableOpacity className="mt-4 bg-blue-600 px-6 py-3 rounded-full">
-                                <Text className={`${textSize} text-white font-semibold`}>
-                                    Book Now
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </View>
-
-                {/* Health Summary */}
-                <View className="mb-6 sm:mb-8">
-                    <Text className={`${cardTitleSize} font-bold text-gray-900 mb-4`}>
-                        Health Summary
-                    </Text>
-                    <View className="bg-white rounded-2xl p-4 sm:p-6 shadow-md elevation-2">
-                        <View className="flex-row items-center mb-4">
-                            <View className="bg-green-100 rounded-full p-3 mr-4">
-                                <Ionicons name="heart" size={isSmartWatch ? 20 : 24} color="#10B981" />
+                {filteredDoctors.map((doctor) => (
+                    <TouchableOpacity
+                        key={doctor.id}
+                        onPress={() => handleDoctorPress(doctor.id)}
+                        className="bg-white border-b border-gray-200 px-4 py-3 flex-row items-center"
+                        activeOpacity={0.7}
+                    >
+                        {/* Avatar */}
+                        <View className="mr-3">
+                            <View className="w-14 h-14 rounded-full bg-blue-100 items-center justify-center">
+                                <Text className="text-3xl">{doctor.avatar}</Text>
                             </View>
-                            <View className="flex-1">
-                                <Text className={`${textSize} text-gray-900 font-semibold`}>
-                                    Overall Health
+                            {doctor.verified && (
+                                <View className="absolute -bottom-1 -right-1 bg-blue-600 rounded-full p-0.5">
+                                    <Ionicons name="checkmark" size={12} color="white" />
+                                </View>
+                            )}
+                        </View>
+
+                        {/* Doctor Info */}
+                        <View className="flex-1">
+                            <View className="flex-row items-center justify-between mb-1">
+                                <Text className="text-gray-900 font-semibold text-base">
+                                    {doctor.name}
                                 </Text>
-                                <Text className={`${textSize} text-gray-500 mt-1`}>
-                                    Looking Good
+                                <Text className="text-gray-400 text-xs">
+                                    {doctor.lastSeen === 'Online' ? 'Online' : doctor.lastSeen}
                                 </Text>
                             </View>
-                        </View>
-                        <TouchableOpacity className="bg-gray-100 rounded-xl p-3 sm:p-4 mt-2">
-                            <Text className={`${textSize} text-blue-600 font-semibold text-center`}>
-                                View Full Report
+                            <Text className="text-gray-600 text-sm mb-1">
+                                {doctor.specialty}
                             </Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
+                            <Text className="text-gray-400 text-xs">
+                                {doctor.phone}
+                            </Text>
+                        </View>
 
-                {/* Recent Activity */}
-                <View className="mb-6 sm:mb-8">
-                    <Text className={`${cardTitleSize} font-bold text-gray-900 mb-4`}>
-                        Recent Activity
-                    </Text>
-                    <View className="bg-white rounded-2xl p-4 sm:p-6 shadow-md elevation-2">
-                        <View className="items-center justify-center py-8 sm:py-12">
-                            <Ionicons name="time-outline" size={iconSize} color="#9CA3AF" />
-                            <Text className={`${textSize} text-gray-500 mt-3 text-center`}>
-                                No recent activity
-                            </Text>
-                        </View>
+                        {/* Status Indicator */}
+                        {doctor.lastSeen === 'Online' && (
+                            <View className="w-3 h-3 bg-green-500 rounded-full ml-2" />
+                        )}
+                    </TouchableOpacity>
+                ))}
+
+                {filteredDoctors.length === 0 && (
+                    <View className="items-center justify-center py-20">
+                        <Ionicons name="search-outline" size={64} color="#9CA3AF" />
+                        <Text className="text-gray-500 mt-4 text-center">
+                            No doctors found
+                        </Text>
                     </View>
-                </View>
+                )}
             </ScrollView>
+
+            {/* Bottom Navigation */}
+            <BottomNavigation />
         </View>
         </>
     );

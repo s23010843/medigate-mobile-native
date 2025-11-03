@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
-import { Image, ScrollView, StatusBar, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { ActivityIndicator, Image, ScrollView, StatusBar, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import Footer from "../components/ui/footer";
 
 import "../global.css";
 
@@ -59,9 +60,9 @@ export default function SplashScreen() {
                 <View className={`flex-1 items-center justify-between ${containerPadding} relative`}>
                     {/* Top Section - Logo and Branding */}
                     <View className={`items-center ${logoMarginTop} ${maxContentWidth}`}>
-                        <View className={`bg-white rounded-3xl ${logoPadding} shadow-2xl mb-4 sm:mb-6 md:mb-8 elevation-8`}>
+                        <View className={`bg-white rounded-full ${logoPadding} shadow-2xl mb-4 sm:mb-6 md:mb-8 elevation-8`}>
                             <Image 
-                                style={{ width: logoSize, height: logoSize }}
+                                style={{ width: logoSize, height: logoSize, borderRadius: logoSize / 2 }}
                                 source={require("../assets/images/favicon.png")} 
                                 resizeMode="contain"
                             />
@@ -69,9 +70,14 @@ export default function SplashScreen() {
                         <Text className={`${titleSize} font-extrabold text-white text-center mb-2 sm:mb-3 md:mb-4 tracking-tight`}>
                             MediGate
                         </Text>
-                        <Text className={`${subtitleSize} text-blue-100 text-center font-medium px-2 sm:px-4`}>
+                        <Text className={`${subtitleSize} text-blue-100 text-center font-medium px-2 sm:px-4 mb-4`}>
                             {isSmartWatch ? 'Healthcare Starts Here' : 'Your Healthcare Journey Starts Here'}
                         </Text>
+                        
+                        {/* Loading Spinner */}
+                        <View className="mt-4">
+                            <ActivityIndicator size={isSmartWatch ? 'small' : 'large'} color="white" />
+                        </View>
                     </View>
 
                     {/* Middle Section - Features */}
@@ -151,7 +157,7 @@ export default function SplashScreen() {
 
                         {/* Terms and Privacy Links */}
                         {!isSmartWatch && (
-                            <View className="items-center">
+                            <View className="items-center mb-4">
                                 <Text className={`text-blue-100 text-center ${featureDescSize} px-4 sm:px-8 leading-5`}>
                                     By continuing, you agree to our
                                 </Text>
@@ -179,6 +185,9 @@ export default function SplashScreen() {
                     </View>
                 </View>
             </ScrollView>
+            
+            {/* Footer */}
+            <Footer />
         </View>
         </>
     );
