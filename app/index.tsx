@@ -1,39 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
 import { Image, ScrollView, StatusBar, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 
 import "../global.css";
 
-export default function WelcomeScreen() {
+export default function SplashScreen() {
     const router = useRouter();
     const { width, height } = useWindowDimensions();
-    const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-
-    // Auto-redirect based on authentication status
-    useEffect(() => {
-        const checkAuthStatus = async () => {
-            try {
-                // TODO: Replace with your actual auth check logic (AsyncStorage, SecureStore, etc.)
-                // Example: const token = await AsyncStorage.getItem('userToken');
-                const isLoggedIn = false; // Replace this with actual auth check
-                
-                // Small delay for smooth transition
-                setTimeout(() => {
-                    if (isLoggedIn) {
-                        router.replace('/dashboard' as any);
-                    } else {
-                        router.replace('/login' as any);
-                    }
-                }, 2000); // 2 second delay to show welcome screen
-            } catch (error) {
-                console.error('Auth check failed:', error);
-                router.replace('/login' as any);
-            }
-        };
-
-        checkAuthStatus();
-    }, []);
 
     // Determine device type based on dimensions
     const isSmartWatch = width < 250;
@@ -68,7 +41,7 @@ export default function WelcomeScreen() {
         <>
             <Stack.Screen
                 options={{
-                    title: "Welcome - MediGate",
+                    title: "MediGate - Healthcare App",
                     headerShown: false,
                 }}
             />
@@ -152,11 +125,34 @@ export default function WelcomeScreen() {
                         </View>
                     </View>
 
-                    {/* Bottom Section - Links */}
+                    {/* Bottom Section - Action Buttons */}
                     <View className={`${maxContentWidth} w-full mb-4 sm:mb-6 md:mb-8`}>
+                        {/* Get Started Button */}
+                        <TouchableOpacity
+                            onPress={() => router.push('/account-setup' as any)}
+                            className="bg-white rounded-full py-4 sm:py-5 mb-4 shadow-xl elevation-4"
+                            activeOpacity={0.85}
+                        >
+                            <Text className={`${buttonTextSize} text-blue-600 text-center font-bold`}>
+                                Get Started
+                            </Text>
+                        </TouchableOpacity>
+
+                        {/* Sign In Button */}
+                        <TouchableOpacity
+                            onPress={() => router.push('/login' as any)}
+                            className="bg-white/20 rounded-full py-4 sm:py-5 mb-6 border-2 border-white"
+                            activeOpacity={0.85}
+                        >
+                            <Text className={`${buttonTextSize} text-white text-center font-bold`}>
+                                Sign In
+                            </Text>
+                        </TouchableOpacity>
+
+                        {/* Terms and Privacy Links */}
                         {!isSmartWatch && (
                             <View className="items-center">
-                                <Text className={`text-blue-100 text-center ${featureDescSize} mt-4 sm:mt-6 px-4 sm:px-8 leading-5`}>
+                                <Text className={`text-blue-100 text-center ${featureDescSize} px-4 sm:px-8 leading-5`}>
                                     By continuing, you agree to our
                                 </Text>
                                 <View className="flex-row items-center justify-center mt-2 gap-4">
