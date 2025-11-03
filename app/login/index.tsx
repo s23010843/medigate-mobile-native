@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Image, KeyboardAvoidingView, Platform, ScrollView, StatusBar, Text, TextInput, TouchableOpacity, useWindowDimensions, View } from "react-native";
 
@@ -38,7 +38,14 @@ export default function LoginScreen() {
     };
 
     return (
-        <KeyboardAvoidingView 
+        <>
+            <Stack.Screen
+                options={{
+                    title: "Login - MediGate",
+                    headerShown: false,
+                }}
+            />
+            <KeyboardAvoidingView 
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             className="flex-1"
         >
@@ -182,5 +189,6 @@ export default function LoginScreen() {
                 </ScrollView>
             </View>
         </KeyboardAvoidingView>
+        </>
     );
 }

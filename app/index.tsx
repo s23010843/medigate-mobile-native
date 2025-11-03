@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Image, ScrollView, StatusBar, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 
@@ -65,7 +65,14 @@ export default function WelcomeScreen() {
     const featureItemWidth = isDesktop || isTV ? 'w-[45%]' : 'w-full';
 
     return (
-        <View className="flex-1 bg-gradient-to-b from-blue-600 to-blue-900">
+        <>
+            <Stack.Screen
+                options={{
+                    title: "Welcome - MediGate",
+                    headerShown: false,
+                }}
+            />
+            <View className="flex-1 bg-gradient-to-b from-blue-600 to-blue-900">
             <StatusBar barStyle="light-content" />
             
             {/* Blue Gradient Background */}
@@ -177,5 +184,6 @@ export default function WelcomeScreen() {
                 </View>
             </ScrollView>
         </View>
+        </>
     );
 }

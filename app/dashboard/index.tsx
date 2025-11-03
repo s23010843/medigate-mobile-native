@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { ScrollView, StatusBar, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 
 import "../../global.css";
@@ -36,7 +36,14 @@ export default function DashboardScreen() {
     ];
 
     return (
-        <View className="flex-1 bg-gray-50">
+        <>
+            <Stack.Screen
+                options={{
+                    title: "Dashboard - MediGate",
+                    headerShown: false,
+                }}
+            />
+            <View className="flex-1 bg-gray-50">
             <StatusBar barStyle="dark-content" />
             
             {/* Header */}
@@ -150,5 +157,6 @@ export default function DashboardScreen() {
                 </View>
             </ScrollView>
         </View>
+        </>
     );
 }

@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { ScrollView, StatusBar, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 
 import "../../global.css";
@@ -22,7 +22,14 @@ export default function PrivacyPolicyScreen() {
     const maxWidth = isTablet || isDesktop || isTV ? 'max-w-4xl' : 'w-full';
 
     return (
-        <View className="flex-1 bg-white">
+        <>
+            <Stack.Screen
+                options={{
+                    title: "Privacy Policy - MediGate",
+                    headerShown: false,
+                }}
+            />
+            <View className="flex-1 bg-white">
             <StatusBar barStyle="dark-content" />
             
             {/* Header */}
@@ -135,5 +142,6 @@ export default function PrivacyPolicyScreen() {
                 </View>
             </ScrollView>
         </View>
+        </>
     );
 }
