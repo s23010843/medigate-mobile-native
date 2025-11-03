@@ -181,3 +181,6 @@ app-example
 # generated native folders
 /ios
 /android
+
+trash
+private
