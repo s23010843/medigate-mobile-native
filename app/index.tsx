@@ -1,15 +1,68 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { Image, StatusBar, Text, TouchableOpacity, View } from "react-native";
+import { useEffect, useState } from 'react';
+import { Image, ScrollView, StatusBar, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 
 import "../global.css";
 
 export default function WelcomeScreen() {
     const router = useRouter();
+    const { width, height } = useWindowDimensions();
+    const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
-    const handleGetStarted = () => {
-        router.push('/account-setup' as any);
-    };
+    // Auto-redirect based on authentication status
+    useEffect(() => {
+        const checkAuthStatus = async () => {
+            try {
+                // TODO: Replace with your actual auth check logic (AsyncStorage, SecureStore, etc.)
+                // Example: const token = await AsyncStorage.getItem('userToken');
+                const isLoggedIn = false; // Replace this with actual auth check
+                
+                // Small delay for smooth transition
+                setTimeout(() => {
+                    if (isLoggedIn) {
+                        router.replace('/dashboard' as any);
+                    } else {
+                        router.replace('/login' as any);
+                    }
+                }, 2000); // 2 second delay to show welcome screen
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                router.replace('/login' as any);
+            }
+        };
+
+        checkAuthStatus();
+    }, []);
+
+    // Determine device type based on dimensions
+    const isSmartWatch = width < 250;
+    const isMobile = width >= 250 && width < 768;
+    const isTablet = width >= 768 && width < 1024;
+    const isDesktop = width >= 1024 && width < 1920;
+    const isTV = width >= 1920;
+
+    // Responsive sizing
+    const logoSize = isSmartWatch ? 40 : isMobile ? 112 : isTablet ? 140 : isDesktop ? 160 : 200;
+    const titleSize = isSmartWatch ? 'text-2xl' : isMobile ? 'text-6xl' : isTablet ? 'text-7xl' : 'text-8xl';
+    const subtitleSize = isSmartWatch ? 'text-xs' : isMobile ? 'text-xl' : isTablet ? 'text-2xl' : 'text-3xl';
+    const iconSize = isSmartWatch ? 16 : isMobile ? 28 : isTablet ? 32 : 40;
+    const featureTitleSize = isSmartWatch ? 'text-xs' : isMobile ? 'text-lg' : isTablet ? 'text-xl' : 'text-2xl';
+    const featureDescSize = isSmartWatch ? 'text-[10px]' : isMobile ? 'text-sm' : isTablet ? 'text-base' : 'text-lg';
+    const buttonTextSize = isSmartWatch ? 'text-sm' : isMobile ? 'text-xl' : isTablet ? 'text-2xl' : 'text-3xl';
+    
+    // Responsive padding and margins
+    const containerPadding = isSmartWatch ? 'px-2 py-4' : isMobile ? 'px-6 py-12' : isTablet ? 'px-12 py-16' : isDesktop ? 'px-24 py-20' : 'px-32 py-24';
+    const logoMarginTop = isSmartWatch ? 'mt-2' : isMobile ? 'mt-16' : isTablet ? 'mt-20' : 'mt-24';
+    const logoPadding = isSmartWatch ? 'p-2' : isMobile ? 'p-8' : isTablet ? 'p-10' : 'p-12';
+    const featurePadding = isSmartWatch ? 'p-2' : isMobile ? 'p-5' : isTablet ? 'p-6' : 'p-8';
+    const iconPadding = isSmartWatch ? 'p-1' : isMobile ? 'p-3' : isTablet ? 'p-4' : 'p-5';
+    const buttonPadding = isSmartWatch ? 'py-2' : isMobile ? 'py-5' : isTablet ? 'py-6' : 'py-8';
+    
+    // Layout adjustments for larger screens
+    const maxContentWidth = isTablet || isDesktop || isTV ? 'max-w-4xl' : 'w-full';
+    const featureLayout = isDesktop || isTV ? 'flex-row flex-wrap justify-center' : 'w-full';
+    const featureItemWidth = isDesktop || isTV ? 'w-[45%]' : 'w-full';
 
     return (
         <View className="flex-1 bg-gradient-to-b from-blue-600 to-blue-900">
@@ -19,80 +72,110 @@ export default function WelcomeScreen() {
             <View className="absolute inset-0 bg-blue-600" />
             <View className="absolute inset-0 bg-gradient-to-br from-blue-500 via-blue-600 to-blue-900 opacity-90" />
 
-            <View className="flex-1 items-center justify-between px-6 py-12 relative">
-                {/* Top Section - Logo and Branding */}
-                <View className="items-center mt-16">
-                    <View className="bg-white rounded-3xl p-8 shadow-2xl mb-8 elevation-8">
-                        <Image 
-                            className="w-28 h-28" 
-                            source={require("../assets/images/favicon.png")} 
-                            resizeMode="contain"
-                        />
+            <ScrollView 
+                contentContainerStyle={{ flexGrow: 1 }}
+                showsVerticalScrollIndicator={false}
+            >
+                <View className={`flex-1 items-center justify-between ${containerPadding} relative`}>
+                    {/* Top Section - Logo and Branding */}
+                    <View className={`items-center ${logoMarginTop} ${maxContentWidth}`}>
+                        <View className={`bg-white rounded-3xl ${logoPadding} shadow-2xl mb-4 sm:mb-6 md:mb-8 elevation-8`}>
+                            <Image 
+                                style={{ width: logoSize, height: logoSize }}
+                                source={require("../assets/images/favicon.png")} 
+                                resizeMode="contain"
+                            />
+                        </View>
+                        <Text className={`${titleSize} font-extrabold text-white text-center mb-2 sm:mb-3 md:mb-4 tracking-tight`}>
+                            MediGate
+                        </Text>
+                        <Text className={`${subtitleSize} text-blue-100 text-center font-medium px-2 sm:px-4`}>
+                            {isSmartWatch ? 'Healthcare Starts Here' : 'Your Healthcare Journey Starts Here'}
+                        </Text>
                     </View>
-                    <Text className="text-6xl font-extrabold text-white text-center mb-4 tracking-tight">
-                        MediGate
-                    </Text>
-                    <Text className="text-xl text-blue-100 text-center font-medium px-4">
-                        Your Healthcare Journey Starts Here
-                    </Text>
+
+                    {/* Middle Section - Features */}
+                    <View className={`${featureLayout} ${maxContentWidth} gap-2 sm:gap-3 md:gap-4 mt-4 sm:mt-6 md:mt-8`}>
+                        <View className={`${featureItemWidth} flex-row items-center bg-white/20 rounded-2xl ${featurePadding} border border-white/30`}>
+                            <View className={`bg-white/30 rounded-full ${iconPadding} mr-2 sm:mr-3 md:mr-4`}>
+                                <Ionicons name="shield-checkmark" size={iconSize} color="white" />
+                            </View>
+                            <View className="flex-1">
+                                <Text className={`text-white font-bold ${featureTitleSize}`}>
+                                    {isSmartWatch ? 'Secure' : 'Secure & Private'}
+                                </Text>
+                                {!isSmartWatch && (
+                                    <Text className={`text-blue-50 ${featureDescSize} mt-1`}>
+                                        Your health data is encrypted and protected
+                                    </Text>
+                                )}
+                            </View>
+                        </View>
+
+                        <View className={`${featureItemWidth} flex-row items-center bg-white/20 rounded-2xl ${featurePadding} border border-white/30`}>
+                            <View className={`bg-white/30 rounded-full ${iconPadding} mr-2 sm:mr-3 md:mr-4`}>
+                                <Ionicons name="calendar" size={iconSize} color="white" />
+                            </View>
+                            <View className="flex-1">
+                                <Text className={`text-white font-bold ${featureTitleSize}`}>
+                                    {isSmartWatch ? 'Appointments' : 'Easy Appointments'}
+                                </Text>
+                                {!isSmartWatch && (
+                                    <Text className={`text-blue-50 ${featureDescSize} mt-1`}>
+                                        Book and manage appointments effortlessly
+                                    </Text>
+                                )}
+                            </View>
+                        </View>
+
+                        <View className={`${featureItemWidth} flex-row items-center bg-white/20 rounded-2xl ${featurePadding} border border-white/30`}>
+                            <View className={`bg-white/30 rounded-full ${iconPadding} mr-2 sm:mr-3 md:mr-4`}>
+                                <Ionicons name="medical" size={iconSize} color="white" />
+                            </View>
+                            <View className="flex-1">
+                                <Text className={`text-white font-bold ${featureTitleSize}`}>
+                                    {isSmartWatch ? 'Expert Care' : 'Expert Care'}
+                                </Text>
+                                {!isSmartWatch && (
+                                    <Text className={`text-blue-50 ${featureDescSize} mt-1`}>
+                                        Connect with qualified healthcare professionals
+                                    </Text>
+                                )}
+                            </View>
+                        </View>
+                    </View>
+
+                    {/* Bottom Section - Links */}
+                    <View className={`${maxContentWidth} w-full mb-4 sm:mb-6 md:mb-8`}>
+                        {!isSmartWatch && (
+                            <View className="items-center">
+                                <Text className={`text-blue-100 text-center ${featureDescSize} mt-4 sm:mt-6 px-4 sm:px-8 leading-5`}>
+                                    By continuing, you agree to our
+                                </Text>
+                                <View className="flex-row items-center justify-center mt-2 gap-4">
+                                    <TouchableOpacity 
+                                        onPress={() => router.push('/terms-and-conditions' as any)}
+                                        activeOpacity={0.7}
+                                    >
+                                        <Text className={`text-white font-bold ${featureDescSize} underline`}>
+                                            Terms of Service
+                                        </Text>
+                                    </TouchableOpacity>
+                                    <Text className="text-blue-100">and</Text>
+                                    <TouchableOpacity 
+                                        onPress={() => router.push('/privacy-policy' as any)}
+                                        activeOpacity={0.7}
+                                    >
+                                        <Text className={`text-white font-bold ${featureDescSize} underline`}>
+                                            Privacy Policy
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        )}
+                    </View>
                 </View>
-
-                {/* Middle Section - Features */}
-                <View className="w-full gap-4 mt-8">
-                    <View className="flex-row items-center bg-white/20 rounded-2xl p-5 border border-white/30">
-                        <View className="bg-white/30 rounded-full p-3 mr-4">
-                            <Ionicons name="shield-checkmark" size={28} color="white" />
-                        </View>
-                        <View className="flex-1">
-                            <Text className="text-white font-bold text-lg">Secure & Private</Text>
-                            <Text className="text-blue-50 text-sm mt-1">Your health data is encrypted and protected</Text>
-                        </View>
-                    </View>
-
-                    <View className="flex-row items-center bg-white/20 rounded-2xl p-5 border border-white/30">
-                        <View className="bg-white/30 rounded-full p-3 mr-4">
-                            <Ionicons name="calendar" size={28} color="white" />
-                        </View>
-                        <View className="flex-1">
-                            <Text className="text-white font-bold text-lg">Easy Appointments</Text>
-                            <Text className="text-blue-50 text-sm mt-1">Book and manage appointments effortlessly</Text>
-                        </View>
-                    </View>
-
-                    <View className="flex-row items-center bg-white/20 rounded-2xl p-5 border border-white/30">
-                        <View className="bg-white/30 rounded-full p-3 mr-4">
-                            <Ionicons name="medical" size={28} color="white" />
-                        </View>
-                        <View className="flex-1">
-                            <Text className="text-white font-bold text-lg">Expert Care</Text>
-                            <Text className="text-blue-50 text-sm mt-1">Connect with qualified healthcare professionals</Text>
-                        </View>
-                    </View>
-                </View>
-
-                {/* Bottom Section - CTA */}
-                <View className="w-full mb-8">
-                    <TouchableOpacity
-                        onPress={handleGetStarted}
-                        className="bg-white rounded-full py-5 shadow-2xl elevation-8"
-                        activeOpacity={0.85}
-                    >
-                        <View className="flex-row items-center justify-center">
-                            <Text className="text-blue-700 text-xl font-bold mr-2">
-                                Get Started
-                            </Text>
-                            <Ionicons name="arrow-forward" size={24} color="#1d4ed8" />
-                        </View>
-                    </TouchableOpacity>
-
-                    <Text className="text-blue-100 text-center text-sm mt-6 px-8 leading-5">
-                        By continuing, you agree to our{' '}
-                        <Text className="text-white font-bold">Terms of Service</Text>
-                        {' '}and{' '}
-                        <Text className="text-white font-bold">Privacy Policy</Text>
-                    </Text>
-                </View>
-            </View>
+            </ScrollView>
         </View>
     );
 }
