@@ -55,9 +55,12 @@ class FeedbackService {
    */
   private async syncToMongoDB(feedback: FeedbackSubmission): Promise<void> {
     if (!MONGODB_API_URL) {
-      console.log('[Feedback] MongoDB URL not configured, skipping sync');
+      console.log('[Feedback] MongoDB URL not configured. Feedback saved locally only.');
+      console.log('[Feedback] To enable MongoDB sync, set EXPO_PUBLIC_MONGODB_API_URL in .env');
       return;
     }
+
+    console.log('[Feedback] Attempting to sync to MongoDB:', MONGODB_API_URL);
 
     try {
       const response = await fetch(`${MONGODB_API_URL}/api/feedback`, {
@@ -70,11 +73,13 @@ class FeedbackService {
 
       if (!response.ok) {
         console.warn('[Feedback] MongoDB sync failed:', response.statusText);
+        console.warn('[Feedback] Response status:', response.status);
       } else {
-        console.log('[Feedback] Successfully synced to MongoDB');
+        console.log('[Feedback] ✅ Successfully synced to MongoDB');
       }
     } catch (error) {
       console.warn('[Feedback] MongoDB sync error:', error);
+      console.log('[Feedback] Feedback is still saved locally');
       // Don't throw - local storage is primary
     }
   }
@@ -114,10 +119,14 @@ class FeedbackService {
         status: 'pending',
       };
 
+      console.log('[Feedback] Submitting feedback:', feedback.id);
+
       // Save to local storage first
       const existingFeedback = await this.getLocalFeedback();
       existingFeedback.unshift(feedback); // Add to beginning
       await this.saveLocalFeedback(existingFeedback);
+
+      console.log('[Feedback] ✅ Saved to localStorage. Total feedback:', existingFeedback.length);
 
       // Try to sync to MongoDB in background (non-blocking)
       this.syncToMongoDB(feedback).catch(() => {
@@ -132,7 +141,7 @@ class FeedbackService {
         message: 'Thank you for your feedback!',
       };
     } catch (error) {
-      console.error('[Feedback] Error submitting feedback:', error);
+      console.error('[Feedback] ❌ Error submitting feedback:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to submit feedback',
