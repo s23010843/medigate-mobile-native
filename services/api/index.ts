@@ -8,10 +8,12 @@ export { appointmentService } from './appointmentService';
 export { apiClient } from './client';
 export { doctorService } from './doctorService';
 export { emergencyService } from './emergencyService';
+export { feedbackService } from './feedbackService';
 export { healthRecordService } from './healthRecordService';
 export { medicationService } from './medicationService';
 export { notificationService } from './notificationService';
 export { pharmacyService } from './pharmacyService';
 export * from './types';
 export { userService } from './userService';
+
 

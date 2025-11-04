@@ -7,8 +7,37 @@
  */
 
 import { API_CONFIG, API_ENDPOINTS } from '../../constants/config';
-import userData from '../../private/user-data.json';
 import type { ApiResponse } from './types';
+
+// Load user data dynamically to handle production builds where the file may not exist
+let userData: any = null;
+let userDataLoaded = false;
+
+async function loadUserData() {
+  if (userDataLoaded) return userData;
+  
+  try {
+    // Try to load the local JSON file
+    userData = require('../../private/user-data.json');
+    userDataLoaded = true;
+  } catch (error) {
+    // If file doesn't exist (production/web build), use mock data
+    console.warn('[API] Local user data not found, using mock data');
+    userData = {
+      user: { id: 1, fullName: 'Demo User', email: 'demo@example.com' },
+      doctors: [],
+      appointments: [],
+      medications: [],
+      healthRecords: [],
+      notifications: [],
+      pharmacies: [],
+      emergencyContacts: []
+    };
+    userDataLoaded = true;
+  }
+  
+  return userData;
+}
 
 class ApiClient {
   private baseURL: string;
@@ -134,36 +163,39 @@ class ApiClient {
     await new Promise(resolve => setTimeout(resolve, 300));
 
     try {
+      // Load user data if not already loaded
+      const localData = await loadUserData();
+      
       // Route to appropriate local data
       switch (endpoint) {
         case API_ENDPOINTS.USER:
-          return { success: true, data: userData.user as T };
+          return { success: true, data: localData.user as T };
         
         case API_ENDPOINTS.DOCTORS:
-          return { success: true, data: userData.doctors as T };
+          return { success: true, data: localData.doctors as T };
         
         case API_ENDPOINTS.DOCTOR_BY_ID:
           const doctorId = urlParams?.id;
-          const doctor = userData.doctors.find((d: any) => d.id === parseInt(doctorId || '0'));
+          const doctor = localData.doctors.find((d: any) => d.id === parseInt(doctorId || '0'));
           return { success: true, data: doctor as T };
         
         case API_ENDPOINTS.APPOINTMENTS:
-          return { success: true, data: userData.appointments as T };
+          return { success: true, data: localData.appointments as T };
         
         case API_ENDPOINTS.MEDICATIONS:
-          return { success: true, data: userData.medications as T };
+          return { success: true, data: localData.medications as T };
         
         case API_ENDPOINTS.HEALTH_RECORDS:
-          return { success: true, data: userData.healthRecords as T };
+          return { success: true, data: localData.healthRecords as T };
         
         case API_ENDPOINTS.NOTIFICATIONS:
-          return { success: true, data: userData.notifications as T };
+          return { success: true, data: localData.notifications as T };
         
         case API_ENDPOINTS.PHARMACIES:
-          return { success: true, data: userData.pharmacies as T };
+          return { success: true, data: localData.pharmacies as T };
         
         case API_ENDPOINTS.EMERGENCY_CONTACTS:
-          return { success: true, data: userData.emergencyContacts as T };
+          return { success: true, data: localData.emergencyContacts as T };
         
         case API_ENDPOINTS.USER_LOGIN:
           // Mock login
@@ -172,11 +204,29 @@ class ApiClient {
               success: true,
               data: {
                 token: 'mock_token_' + Date.now(),
-                user: userData.user,
+                user: localData.user,
               } as T,
             };
           }
           return { success: false, error: 'Invalid credentials' };
+        
+        case API_ENDPOINTS.FEEDBACK_SUBMIT:
+          // Mock feedback submission
+          console.log('[API] Feedback submitted (local mode):', data);
+          return {
+            success: true,
+            data: {
+              id: 'local_feedback_' + Date.now(),
+              message: 'Feedback submitted successfully (local mode)',
+            } as T,
+          };
+        
+        case API_ENDPOINTS.FEEDBACK_LIST:
+          // Mock feedback list
+          return {
+            success: true,
+            data: [] as T,
+          };
         
         default:
           // For other endpoints, return success with the provided data

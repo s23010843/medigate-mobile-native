@@ -176,3 +176,40 @@ export interface MarkMedicationTakenRequest {
   date: string;
   time: string;
 }
+
+// Feedback types
+export interface FeedbackSubmission {
+  id?: string;
+  userId?: number;
+  userName?: string;
+  email?: string;
+  category: 'bug' | 'feature' | 'improvement' | 'complaint' | 'other';
+  subject: string;
+  description: string;
+  rating?: number;
+  deviceInfo?: {
+    platform: string;
+    version: string;
+    model?: string;
+  };
+  screenshot?: string;
+  timestamp?: string;
+  status?: 'pending' | 'reviewed' | 'resolved';
+}
+
+export interface SubmitFeedbackRequest {
+  feedback: FeedbackSubmission;
+}
+
+export interface FeedbackStats {
+  total: number;
+  byCategory: {
+    bug: number;
+    feature: number;
+    improvement: number;
+    complaint: number;
+    other: number;
+  };
+  averageRating: number;
+}
+

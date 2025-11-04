@@ -303,7 +303,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Contact & Support
 
-- **Email**: support.medigate@example.com
+- **Email**: support@medigate.example.com
 - **Phone**: 1-800-MEDIGATE
 - **GitHub**: [@s23010843](https://github.com/s23010843)
 

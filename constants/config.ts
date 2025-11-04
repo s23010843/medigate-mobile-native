@@ -67,6 +67,10 @@ export const API_ENDPOINTS = {
   
   // Emergency contacts
   EMERGENCY_CONTACTS: '/emergency-contacts',
+  
+  // Feedback endpoints
+  FEEDBACK_SUBMIT: '/feedback/submit',
+  FEEDBACK_LIST: '/feedback',
 };
 
 // Storage keys for AsyncStorage

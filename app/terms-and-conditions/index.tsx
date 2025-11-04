@@ -159,7 +159,7 @@ export default function TermsAndConditionsScreen() {
                     </Text>
                     <Text className={`${textSize} text-gray-700 mb-8 sm:mb-12 leading-6 sm:leading-7`}>
                         If you have any questions about these Terms of Service, please contact us at:{'\n\n'}
-                        Email: support@medigate.com{'\n'}
+                        Email: support@medigate.example.com{'\n'}
                         Phone: 1-800-MEDIGATE{'\n'}
                         Address: 123 Healthcare Ave, Medical City, MC 12345
                     </Text>

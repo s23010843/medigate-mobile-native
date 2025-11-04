@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
-import { ActivityIndicator, Image, ScrollView, StatusBar, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { useEffect, useRef } from 'react';
+import { ActivityIndicator, Animated, Image, ScrollView, StatusBar, Text, useWindowDimensions, View } from "react-native";
 import Footer from "../components/ui/footer";
 
 import "../global.css";
@@ -8,6 +9,24 @@ import "../global.css";
 export default function SplashScreen() {
     const router = useRouter();
     const { width, height } = useWindowDimensions();
+    const fadeAnim = useRef(new Animated.Value(1)).current;
+
+    // Auto-navigate to dashboard after 2 seconds with fade animation
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            // Fade out animation
+            Animated.timing(fadeAnim, {
+                toValue: 0,
+                duration: 500,
+                useNativeDriver: true,
+            }).start(() => {
+                // Navigate to dashboard after fade out
+                router.replace('/dashboard' as any);
+            });
+        }, 2000);
+
+        return () => clearTimeout(timer);
+    }, [router, fadeAnim]);
 
     // Determine device type based on dimensions
     const isSmartWatch = width < 250;
@@ -46,7 +65,10 @@ export default function SplashScreen() {
                     headerShown: false,
                 }}
             />
-            <View className="flex-1 bg-gradient-to-b from-blue-600 to-blue-900">
+            <Animated.View 
+                style={{ flex: 1, opacity: fadeAnim }}
+                className="flex-1 bg-gradient-to-b from-blue-600 to-blue-900"
+            >
             <StatusBar barStyle="light-content" />
             
             {/* Blue Gradient Background */}
@@ -70,13 +92,16 @@ export default function SplashScreen() {
                         <Text className={`${titleSize} font-extrabold text-white text-center mb-2 sm:mb-3 md:mb-4 tracking-tight`}>
                             MediGate
                         </Text>
-                        <Text className={`${subtitleSize} text-blue-100 text-center font-medium px-2 sm:px-4 mb-4`}>
+                        <Text className={`${subtitleSize} text-blue-100 text-center font-medium px-2 sm:px-4 mb-6`}>
                             {isSmartWatch ? 'Healthcare Starts Here' : 'Your Healthcare Journey Starts Here'}
                         </Text>
                         
-                        {/* Loading Spinner */}
-                        <View className="mt-4">
+                        {/* Loading Animation */}
+                        <View className="mt-8">
                             <ActivityIndicator size={isSmartWatch ? 'small' : 'large'} color="white" />
+                            <Text className={`${featureDescSize} text-blue-100 text-center font-medium mt-4`}>
+                                Loading...
+                            </Text>
                         </View>
                     </View>
 
@@ -131,64 +156,14 @@ export default function SplashScreen() {
                         </View>
                     </View>
 
-                    {/* Bottom Section - Action Buttons */}
-                    <View className={`${maxContentWidth} w-full mb-4 sm:mb-6 md:mb-8`}>
-                        {/* Get Started Button */}
-                        <TouchableOpacity
-                            onPress={() => router.push('/account-setup' as any)}
-                            className="bg-white rounded-full py-4 sm:py-5 mb-4 shadow-xl elevation-4"
-                            activeOpacity={0.85}
-                        >
-                            <Text className={`${buttonTextSize} text-blue-600 text-center font-bold`}>
-                                Get Started
-                            </Text>
-                        </TouchableOpacity>
-
-                        {/* Sign In Button */}
-                        <TouchableOpacity
-                            onPress={() => router.push('/login' as any)}
-                            className="bg-white/20 rounded-full py-4 sm:py-5 mb-6 border-2 border-white"
-                            activeOpacity={0.85}
-                        >
-                            <Text className={`${buttonTextSize} text-white text-center font-bold`}>
-                                Sign In
-                            </Text>
-                        </TouchableOpacity>
-
-                        {/* Terms and Privacy Links */}
-                        {!isSmartWatch && (
-                            <View className="items-center mb-4">
-                                <Text className={`text-blue-100 text-center ${featureDescSize} px-4 sm:px-8 leading-5`}>
-                                    By continuing, you agree to our
-                                </Text>
-                                <View className="flex-row items-center justify-center mt-2 gap-4">
-                                    <TouchableOpacity 
-                                        onPress={() => router.push('/terms-and-conditions' as any)}
-                                        activeOpacity={0.7}
-                                    >
-                                        <Text className={`text-white font-bold ${featureDescSize} underline`}>
-                                            Terms of Service
-                                        </Text>
-                                    </TouchableOpacity>
-                                    <Text className="text-blue-100">and</Text>
-                                    <TouchableOpacity 
-                                        onPress={() => router.push('/privacy-policy' as any)}
-                                        activeOpacity={0.7}
-                                    >
-                                        <Text className={`text-white font-bold ${featureDescSize} underline`}>
-                                            Privacy Policy
-                                        </Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        )}
-                    </View>
+                    {/* Bottom Spacer for balanced layout */}
+                    <View className="mb-8" />
                 </View>
             </ScrollView>
             
             {/* Footer */}
             <Footer />
-        </View>
+        </Animated.View>
         </>
     );
 }
