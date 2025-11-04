@@ -13,9 +13,9 @@ export const API_CONFIG = {
   // Base URL for API endpoints
   // In development: use local JSON file
   // In production: use your backend API URL
-  BASE_URL: IS_DEV 
+  BASE_URL: process.env.EXPO_PUBLIC_API_URL === 'local' || !process.env.EXPO_PUBLIC_API_URL || IS_DEV
     ? 'local' // Special flag for local JSON file
-    : process.env.EXPO_PUBLIC_API_URL || 'https://api.medigate.com',
+    : process.env.EXPO_PUBLIC_API_URL,
   
   // API version
   VERSION: 'v1',
