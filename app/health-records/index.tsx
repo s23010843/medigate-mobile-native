@@ -3,12 +3,14 @@ import { Stack, useRouter } from 'expo-router';
 import { ScrollView, StatusBar, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import BottomNavigation from "../../components/ui/bottom-navigation";
 import Header from "../../components/ui/header";
+import { useData } from '../../contexts/DataContext';
 
 import "../../global.css";
 
 export default function HealthRecordsScreen() {
     const router = useRouter();
     const { width } = useWindowDimensions();
+    const { healthRecords } = useData();
 
     // Responsive sizing
     const isSmartWatch = width < 250;
@@ -21,12 +23,6 @@ export default function HealthRecordsScreen() {
     const buttonTextSize = isSmartWatch ? 'text-sm' : isMobile ? 'text-base' : isTablet ? 'text-lg' : 'text-xl';
     const iconSize = isSmartWatch ? 20 : isMobile ? 24 : isTablet ? 28 : 32;
     const containerPadding = isSmartWatch ? 'px-3 py-4' : isMobile ? 'px-4 py-6' : isTablet ? 'px-8 py-8' : 'px-16 py-12';
-
-    const records = [
-        { id: 1, title: "Blood Test Results", date: "Oct 28, 2025", type: "Lab Report", icon: "flask" },
-        { id: 2, title: "X-Ray Chest", date: "Oct 15, 2025", type: "Imaging", icon: "image" },
-        { id: 3, title: "Prescription - Antibiotics", date: "Oct 10, 2025", type: "Prescription", icon: "medical" }
-    ];
 
     return (
         <>
@@ -98,7 +94,7 @@ export default function HealthRecordsScreen() {
                             Recent Records
                         </Text>
                         <View className="gap-3">
-                            {records.map((record) => (
+                            {healthRecords.map((record) => (
                                 <TouchableOpacity
                                     key={record.id}
                                     className="flex-row items-center bg-gray-50 rounded-xl p-4 border border-gray-200"
@@ -112,7 +108,7 @@ export default function HealthRecordsScreen() {
                                             {record.title}
                                         </Text>
                                         <Text className={`${textSize} text-gray-600 mt-1`}>
-                                            {record.type} • {record.date}
+                                            {record.type} • {new Date(record.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                         </Text>
                                     </View>
                                     <Ionicons name="chevron-forward" size={iconSize} color="#6B7280" />

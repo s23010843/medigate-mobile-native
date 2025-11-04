@@ -18,6 +18,8 @@ MediGate is a comprehensive healthcare mobile application designed to bridge the
 - 🔒 **Privacy & Security** - HIPAA compliant with encrypted data
 - 🌐 **Auto-redirect** - Smart routing based on authentication status
 - ⚠️ **Error Handling** - User-friendly error pages (404, 429, 500)
+- ✨ **API Integration** - Service-based architecture ready for MongoDB
+- 🔄 **Easy Migration** - Switch from local JSON to production backend with just .env change
 
 ## 🚀 Getting Started
 
@@ -94,19 +96,45 @@ medigate-mobile-native/
 │   ├── themed-text.tsx
 │   ├── themed-view.tsx
 │   └── ui/                      # UI component library
-├── constants/                    # App constants and theme
-│   └── theme.ts
+├── constants/                    # App constants and configuration
+│   ├── theme.ts                 # Theme configuration
+│   └── config.ts                # ✨ API configuration and endpoints
+├── contexts/                     # ✨ React Context providers
+│   └── DataContext.tsx          # Global state management with API services
+├── services/                     # ✨ NEW: Service layer
+│   └── api/                     # API services
+│       ├── client.ts            # HTTP client (local/remote switching)
+│       ├── types.ts             # TypeScript interfaces
+│       ├── userService.ts       # User operations
+│       ├── doctorService.ts     # Doctor operations
+│       ├── appointmentService.ts
+│       ├── medicationService.ts
+│       ├── healthRecordService.ts
+│       ├── notificationService.ts
+│       ├── pharmacyService.ts
+│       ├── emergencyService.ts
+│       └── index.ts             # Export all services
+├── private/                      # Private data (not in production)
+│   └── user-data.json           # Development data source
+├── docs/                         # ✨ Documentation
+│   ├── API_INTEGRATION.md       # Architecture details
+│   ├── BACKEND_SETUP.md         # Backend implementation guide
+│   ├── API_QUICK_REFERENCE.md   # Quick start guide
+│   └── MIGRATION_SUMMARY.md     # Implementation summary
 ├── hooks/                        # Custom React hooks
 │   ├── use-color-scheme.ts
 │   ├── use-color-scheme.web.ts
 │   └── use-theme-color.ts
 ├── scripts/                      # Build and utility scripts
+├── .env.example                  # ✨ Environment variables template
 ├── app.json                      # Expo configuration
 ├── tailwind.config.js           # TailwindCSS configuration
 ├── tsconfig.json                # TypeScript configuration
 ├── package.json                 # Dependencies and scripts
 └── README.md                    # This file
 ```
+
+✨ **New**: Service-based API architecture with MongoDB migration support!
 
 ## 🎨 Tech Stack
 
@@ -116,7 +144,9 @@ medigate-mobile-native/
 - **Styling**: NativeWind (TailwindCSS for React Native)
 - **Icons**: @expo/vector-icons (Ionicons)
 - **Navigation**: React Navigation
-- **State Management**: React Hooks
+- **State Management**: React Context API
+- **API Architecture**: Service-based with automatic local/remote switching
+- **Type Safety**: Full TypeScript support with comprehensive interfaces
 
 ## 📱 Responsive Design
 
@@ -179,16 +209,53 @@ npm run reset-project
 
 ## 🎯 Environment Setup
 
-Create a `.env` file in the root directory (not included in repo):
+### Development Mode (Current)
+
+The app currently uses local JSON data. No backend setup needed!
+
+```bash
+# Just start the app
+npm start
+```
+
+Data is loaded from: `private/user-data.json`
+
+### Production Mode (Future)
+
+Create a `.env` file in the root directory:
 
 ```env
 # API Configuration
-API_URL=https://api.medigate.example.com
-API_KEY=api_key_here
+EXPO_PUBLIC_API_URL=https://api.medigate.com
 
-# Authentication
-AUTH_SECRET=your_auth_secret_here
+# Optional: Third-party services
+SENTRY_DSN=your-sentry-dsn
+ANALYTICS_KEY=your-analytics-key
 ```
+
+See `.env.example` for all available options.
+
+### 🔄 Switching to MongoDB Backend
+
+**Step 1**: Set up backend (see `docs/BACKEND_SETUP.md`)
+
+**Step 2**: Update `.env`:
+```env
+EXPO_PUBLIC_API_URL=https://your-backend-url.com
+```
+
+**Step 3**: Rebuild app
+```bash
+npx expo build
+```
+
+That's it! The app automatically switches from local JSON to your backend API.
+
+📚 **Learn More**: 
+- [API Integration Guide](./docs/API_INTEGRATION.md)
+- [Backend Setup Guide](./docs/BACKEND_SETUP.md)
+- [Quick Reference](./docs/API_QUICK_REFERENCE.md)
+- [Migration Summary](./docs/MIGRATION_SUMMARY.md)
 
 ## 🧪 Testing
 
@@ -249,9 +316,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📚 Additional Documentation
 
-- [Architecture Documentation](./ARCHITECTURE.md)
-- [API Documentation](./docs/API.md) (Coming soon)
-- [Contributing Guidelines](./CONTRIBUTING.md) (Coming soon)
+- **[Architecture Documentation](./ARCHITECTURE.md)** - App architecture overview
+- **[API Integration Guide](./docs/API_INTEGRATION.md)** - Complete API architecture
+- **[Backend Setup Guide](./docs/BACKEND_SETUP.md)** - How to create backend API
+- **[Quick Reference](./docs/API_QUICK_REFERENCE.md)** - Quick start guide
+- **[Migration Summary](./docs/MIGRATION_SUMMARY.md)** - Implementation details
+- **[Data Integration](./docs/DATA_INTEGRATION.md)** - Data flow documentation
 
 ---
 

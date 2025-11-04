@@ -3,69 +3,20 @@ import { Stack, useRouter } from 'expo-router';
 import { ScrollView, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import BottomNavigation from "../../components/ui/bottom-navigation";
 import Header from "../../components/ui/header";
+import { useData } from '../../contexts/DataContext';
 
 import "../../global.css";
 
 export default function NotificationsScreen() {
     const router = useRouter();
+    const { notifications, markNotificationAsRead } = useData();
 
-    const notifications = [
-        {
-            id: 1,
-            type: 'appointment',
-            icon: 'calendar',
-            iconBg: 'bg-blue-100',
-            iconColor: '#2563EB',
-            title: 'Appointment Reminder',
-            message: 'You have an appointment with Dr. Sarah Johnson tomorrow at 10:00 AM',
-            time: '2 hours ago',
-            read: false
-        },
-        {
-            id: 2,
-            type: 'medication',
-            icon: 'medical',
-            iconBg: 'bg-green-100',
-            iconColor: '#10B981',
-            title: 'Medication Reminder',
-            message: 'Time to take your Blood Pressure medication',
-            time: '3 hours ago',
-            read: false
-        },
-        {
-            id: 3,
-            type: 'report',
-            icon: 'document-text',
-            iconBg: 'bg-purple-100',
-            iconColor: '#8B5CF6',
-            title: 'Lab Results Available',
-            message: 'Your blood test results are ready to view',
-            time: '1 day ago',
-            read: true
-        },
-        {
-            id: 4,
-            type: 'message',
-            icon: 'chatbubbles',
-            iconBg: 'bg-orange-100',
-            iconColor: '#F59E0B',
-            title: 'New Message',
-            message: 'Dr. Chen sent you a message regarding your treatment',
-            time: '2 days ago',
-            read: true
-        },
-        {
-            id: 5,
-            type: 'emergency',
-            icon: 'warning',
-            iconBg: 'bg-red-100',
-            iconColor: '#EF4444',
-            title: 'Emergency Alert',
-            message: 'Emergency contact information updated successfully',
-            time: '3 days ago',
-            read: true
+    const handleNotificationPress = (notification: any) => {
+        markNotificationAsRead(notification.id);
+        if (notification.actionable && notification.action) {
+            router.push(notification.action as any);
         }
-    ];
+    };
 
     const unreadCount = notifications.filter(n => !n.read).length;
 
@@ -106,6 +57,7 @@ export default function NotificationsScreen() {
                         {notifications.map((notification, index) => (
                             <TouchableOpacity
                                 key={notification.id}
+                                onPress={() => handleNotificationPress(notification)}
                                 className={`bg-white rounded-2xl p-4 mb-3 shadow-sm elevation-2 ${
                                     !notification.read ? 'border-2 border-blue-200' : ''
                                 }`}

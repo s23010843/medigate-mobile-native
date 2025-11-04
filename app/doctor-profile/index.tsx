@@ -1,30 +1,19 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Stack, useRouter } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { ScrollView, StatusBar, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import Footer from "../../components/ui/footer";
+import { useData } from '../../contexts/DataContext';
 
 import "../../global.css";
 
 export default function DoctorProfileScreen() {
     const router = useRouter();
     const { width } = useWindowDimensions();
+    const { id } = useLocalSearchParams();
+    const { getDoctorById } = useData();
 
-    // Responsive sizing
-    const isSmartWatch = width < 250;
-    const isMobile = width >= 250 && width < 768;
-    const isTablet = width >= 768 && width < 1024;
-    const isDesktop = width >= 1024 && width < 1920;
-
-    const titleSize = isSmartWatch ? 'text-xl' : isMobile ? 'text-3xl' : isTablet ? 'text-4xl' : 'text-5xl';
-    const textSize = isSmartWatch ? 'text-xs' : isMobile ? 'text-base' : isTablet ? 'text-lg' : 'text-xl';
-    const cardTitleSize = isSmartWatch ? 'text-sm' : isMobile ? 'text-xl' : isTablet ? 'text-2xl' : 'text-3xl';
-    const buttonTextSize = isSmartWatch ? 'text-sm' : isMobile ? 'text-lg' : isTablet ? 'text-xl' : 'text-2xl';
-    const iconSize = isSmartWatch ? 20 : isMobile ? 24 : isTablet ? 28 : 32;
-    const avatarSize = isSmartWatch ? 80 : isMobile ? 120 : isTablet ? 140 : 160;
-    const containerPadding = isSmartWatch ? 'px-3 py-4' : isMobile ? 'px-4 py-6' : isTablet ? 'px-8 py-8' : 'px-16 py-12';
-
-    // Mock doctor data
-    const doctor = {
+    // Get doctor data from context
+    const doctor = getDoctorById(Number(id)) || {
         name: "Dr. Sarah Johnson",
         specialty: "Cardiologist",
         experience: "15 years",
@@ -39,6 +28,20 @@ export default function DoctorProfileScreen() {
         languages: ["English", "Spanish", "French"],
         availability: "Mon-Fri: 9:00 AM - 5:00 PM"
     };
+
+    // Responsive sizing
+    const isSmartWatch = width < 250;
+    const isMobile = width >= 250 && width < 768;
+    const isTablet = width >= 768 && width < 1024;
+    const isDesktop = width >= 1024 && width < 1920;
+
+    const titleSize = isSmartWatch ? 'text-xl' : isMobile ? 'text-3xl' : isTablet ? 'text-4xl' : 'text-5xl';
+    const textSize = isSmartWatch ? 'text-xs' : isMobile ? 'text-base' : isTablet ? 'text-lg' : 'text-xl';
+    const cardTitleSize = isSmartWatch ? 'text-sm' : isMobile ? 'text-xl' : isTablet ? 'text-2xl' : 'text-3xl';
+    const buttonTextSize = isSmartWatch ? 'text-sm' : isMobile ? 'text-lg' : isTablet ? 'text-xl' : 'text-2xl';
+    const iconSize = isSmartWatch ? 20 : isMobile ? 24 : isTablet ? 28 : 32;
+    const avatarSize = isSmartWatch ? 80 : isMobile ? 120 : isTablet ? 140 : 160;
+    const containerPadding = isSmartWatch ? 'px-3 py-4' : isMobile ? 'px-4 py-6' : isTablet ? 'px-8 py-8' : 'px-16 py-12';
 
     return (
         <>

@@ -2,12 +2,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
 import { Alert, ScrollView, StatusBar, Text, TextInput, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import Footer from "../../components/ui/footer";
+import { useData } from '../../contexts/DataContext';
 
 import "../../global.css";
 
 export default function PharmacyScreen() {
     const router = useRouter();
     const { width } = useWindowDimensions();
+    const { pharmacies } = useData();
 
     const handlePayment = () => {
         Alert.alert(
@@ -31,33 +33,6 @@ export default function PharmacyScreen() {
     const buttonTextSize = isSmartWatch ? 'text-sm' : isMobile ? 'text-base' : isTablet ? 'text-lg' : 'text-xl';
     const iconSize = isSmartWatch ? 20 : isMobile ? 24 : isTablet ? 28 : 32;
     const containerPadding = isSmartWatch ? 'px-3 py-4' : isMobile ? 'px-4 py-6' : isTablet ? 'px-8 py-8' : 'px-16 py-12';
-
-    const pharmacies = [
-        { 
-            id: 1, 
-            name: "CVS Pharmacy", 
-            distance: "0.5 mi", 
-            rating: 4.5,
-            open: true,
-            address: "123 Main St, City, State"
-        },
-        { 
-            id: 2, 
-            name: "Walgreens", 
-            distance: "0.8 mi", 
-            rating: 4.3,
-            open: true,
-            address: "456 Oak Ave, City, State"
-        },
-        { 
-            id: 3, 
-            name: "Rite Aid", 
-            distance: "1.2 mi", 
-            rating: 4.2,
-            open: false,
-            address: "789 Elm St, City, State"
-        }
-    ];
 
     return (
         <>

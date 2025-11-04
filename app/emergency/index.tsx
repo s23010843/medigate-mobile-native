@@ -2,12 +2,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
 import { Alert, Linking, ScrollView, StatusBar, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import BottomNavigation from "../../components/ui/bottom-navigation";
+import { useData } from '../../contexts/DataContext';
 
 import "../../global.css";
 
 export default function EmergencyScreen() {
     const router = useRouter();
     const { width } = useWindowDimensions();
+    const { emergencyContacts, user } = useData();
 
     // Responsive sizing
     const isSmartWatch = width < 250;
@@ -36,12 +38,6 @@ export default function EmergencyScreen() {
             ]
         );
     };
-
-    const emergencyContacts = [
-        { name: "Emergency Services", number: "911", icon: "call" },
-        { name: "Poison Control", number: "1-800-222-1222", icon: "flask" },
-        { name: "Mental Health Crisis", number: "988", icon: "happy" }
-    ];
 
     return (
         <>
@@ -106,29 +102,48 @@ export default function EmergencyScreen() {
                             Emergency Contacts
                         </Text>
                         <View className="gap-3">
-                            {emergencyContacts.map((contact, index) => (
-                                <TouchableOpacity
-                                    key={index}
-                                    onPress={() => handleEmergencyCall(contact.number)}
-                                    className="flex-row items-center justify-between bg-gray-50 rounded-xl px-4 py-4 border border-gray-200"
-                                    activeOpacity={0.7}
-                                >
-                                    <View className="flex-row items-center flex-1">
-                                        <View className="bg-red-100 rounded-full p-3 mr-4">
-                                            <Ionicons name={contact.icon as any} size={smallIconSize} color="#DC2626" />
+                            {emergencyContacts.map((contact, index) => {
+                                // Map contact type to icon
+                                const getIcon = (type: string) => {
+                                    switch (type) {
+                                        case 'Emergency Services': return 'call';
+                                        case 'Primary Care': return 'medical';
+                                        case 'Specialist': return 'heart';
+                                        case 'Family': return 'people';
+                                        case 'Hospital': return 'business';
+                                        default: return 'call';
+                                    }
+                                };
+
+                                return (
+                                    <TouchableOpacity
+                                        key={contact.id}
+                                        onPress={() => handleEmergencyCall(contact.phone)}
+                                        className="flex-row items-center justify-between bg-gray-50 rounded-xl px-4 py-4 border border-gray-200"
+                                        activeOpacity={0.7}
+                                    >
+                                        <View className="flex-row items-center flex-1">
+                                            <View className="bg-red-100 rounded-full p-3 mr-4">
+                                                <Ionicons name={getIcon(contact.type) as any} size={smallIconSize} color="#DC2626" />
+                                            </View>
+                                            <View className="flex-1">
+                                                <Text className={`${textSize} font-bold text-gray-900`}>
+                                                    {contact.name}
+                                                </Text>
+                                                <Text className={`${textSize} text-gray-600 mt-1`}>
+                                                    {contact.phone}
+                                                </Text>
+                                                {contact.description && (
+                                                    <Text className={`${textSize} text-gray-500 mt-1 text-xs`}>
+                                                        {contact.description}
+                                                    </Text>
+                                                )}
+                                            </View>
                                         </View>
-                                        <View className="flex-1">
-                                            <Text className={`${textSize} font-bold text-gray-900`}>
-                                                {contact.name}
-                                            </Text>
-                                            <Text className={`${textSize} text-gray-600 mt-1`}>
-                                                {contact.number}
-                                            </Text>
-                                        </View>
-                                    </View>
-                                    <Ionicons name="call" size={smallIconSize} color="#2563EB" />
-                                </TouchableOpacity>
-                            ))}
+                                        <Ionicons name="call" size={smallIconSize} color="#2563EB" />
+                                    </TouchableOpacity>
+                                );
+                            })}
                         </View>
                     </View>
 

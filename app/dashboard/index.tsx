@@ -5,6 +5,7 @@ import { ScrollView, StatusBar, Text, TouchableOpacity, useWindowDimensions, Vie
 import BottomNavigation from "../../components/ui/bottom-navigation";
 import Header from "../../components/ui/header";
 import SearchBox from "../../components/ui/search-box";
+import { useData } from '../../contexts/DataContext';
 
 import "../../global.css";
 
@@ -12,17 +13,9 @@ export default function DashboardScreen() {
     const router = useRouter();
     const { width } = useWindowDimensions();
     const [searchQuery, setSearchQuery] = useState('');
+    const { doctors, user } = useData();
 
-    // Mock doctor data
-    const doctors = [
-        { id: 1, name: 'Dr. Sarah Johnson', specialty: 'Cardiologist', phone: '+1 234-567-8901', avatar: '👩‍⚕️', lastSeen: 'Online', verified: true },
-        { id: 2, name: 'Dr. Michael Chen', specialty: 'Pediatrician', phone: '+1 234-567-8902', avatar: '👨‍⚕️', lastSeen: 'Last seen 5m ago', verified: true },
-        { id: 3, name: 'Dr. Emily Davis', specialty: 'Dermatologist', phone: '+1 234-567-8903', avatar: '👩‍⚕️', lastSeen: 'Last seen 1h ago', verified: false },
-        { id: 4, name: 'Dr. James Wilson', specialty: 'Orthopedic', phone: '+1 234-567-8904', avatar: '👨‍⚕️', lastSeen: 'Last seen 2h ago', verified: true },
-        { id: 5, name: 'Dr. Linda Martinez', specialty: 'Neurologist', phone: '+1 234-567-8905', avatar: '👩‍⚕️', lastSeen: 'Online', verified: true },
-        { id: 6, name: 'Dr. Robert Taylor', specialty: 'General Physician', phone: '+1 234-567-8906', avatar: '👨‍⚕️', lastSeen: 'Last seen 30m ago', verified: false },
-    ];
-
+    // Filter doctors based on search query
     const filteredDoctors = doctors.filter(doctor => 
         doctor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         doctor.specialty.toLowerCase().includes(searchQuery.toLowerCase()) ||

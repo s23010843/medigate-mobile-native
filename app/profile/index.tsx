@@ -3,29 +3,52 @@ import { Stack, useRouter } from 'expo-router';
 import { ScrollView, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import BottomNavigation from "../../components/ui/bottom-navigation";
 import Header from "../../components/ui/header";
+import { useData } from '../../contexts/DataContext';
 
 import "../../global.css";
 
 export default function ProfileScreen() {
     const router = useRouter();
+    const { user } = useData();
+
+    if (!user) {
+        return null; // or a loading screen
+    }
 
     const profileSections = [
         {
             title: 'Personal Information',
             items: [
-                { icon: 'person', label: 'Full Name', value: 'John Doe' },
-                { icon: 'mail', label: 'Email', value: 'john.doe@example.com' },
-                { icon: 'call', label: 'Phone', value: '+1 234-567-8900' },
-                { icon: 'calendar', label: 'Date of Birth', value: 'January 15, 1990' },
+                { icon: 'person', label: 'Full Name', value: user.fullName },
+                { icon: 'mail', label: 'Email', value: user.email },
+                { icon: 'call', label: 'Phone', value: user.phone },
+                { icon: 'calendar', label: 'Date of Birth', value: new Date(user.dateOfBirth).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) },
+                { icon: 'transgender', label: 'Gender', value: user.gender },
             ]
         },
         {
             title: 'Medical Information',
             items: [
-                { icon: 'water', label: 'Blood Type', value: 'O+' },
-                { icon: 'fitness', label: 'Height', value: '5\'10"' },
-                { icon: 'speedometer', label: 'Weight', value: '165 lbs' },
-                { icon: 'warning', label: 'Allergies', value: 'Penicillin' },
+                { icon: 'water', label: 'Blood Type', value: user.medicalInfo.bloodType },
+                { icon: 'fitness', label: 'Height', value: user.medicalInfo.height },
+                { icon: 'speedometer', label: 'Weight', value: user.medicalInfo.weight },
+                { icon: 'warning', label: 'Allergies', value: user.medicalInfo.allergies.join(', ') },
+                { icon: 'medical', label: 'Conditions', value: user.medicalInfo.chronicConditions.join(', ') },
+            ]
+        },
+        {
+            title: 'Insurance Information',
+            items: [
+                { icon: 'shield', label: 'Provider', value: user.medicalInfo.insuranceProvider },
+                { icon: 'card', label: 'Insurance ID', value: user.medicalInfo.insuranceId },
+            ]
+        },
+        {
+            title: 'Emergency Contact',
+            items: [
+                { icon: 'person', label: 'Name', value: user.emergencyContact.name },
+                { icon: 'heart', label: 'Relationship', value: user.emergencyContact.relationship },
+                { icon: 'call', label: 'Phone', value: user.emergencyContact.phone },
             ]
         },
     ];
@@ -51,13 +74,13 @@ export default function ProfileScreen() {
                     {/* Profile Picture & Basic Info */}
                     <View className="bg-white rounded-3xl p-6 shadow-lg elevation-4 mb-6 items-center">
                         <View className="w-24 h-24 rounded-full bg-blue-100 items-center justify-center mb-4">
-                            <Text className="text-5xl">👤</Text>
+                            <Text className="text-5xl">{user.avatar}</Text>
                         </View>
                         <Text className="text-2xl font-bold text-gray-900 mb-1">
-                            John Doe
+                            {user.fullName}
                         </Text>
                         <Text className="text-base text-gray-600 mb-4">
-                            Patient ID: #12345
+                            Patient ID: #{user.id.toString().padStart(5, '0')}
                         </Text>
                         <TouchableOpacity className="bg-blue-600 px-6 py-2 rounded-full">
                             <Text className="text-white font-semibold">

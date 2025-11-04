@@ -5,13 +5,15 @@ import { ScrollView, StatusBar, Switch, Text, TouchableOpacity, useWindowDimensi
 import BottomNavigation from "../../components/ui/bottom-navigation";
 import Header from "../../components/ui/header";
 import SearchBox from "../../components/ui/search-box";
+import { useData } from '../../contexts/DataContext';
 
 import "../../global.css";
 
 export default function MedicationTrackerScreen() {
     const router = useRouter();
     const { width } = useWindowDimensions();
-    const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+    const { medications, markMedicationAsTaken, user } = useData();
+    const [notificationsEnabled, setNotificationsEnabled] = useState(user?.preferences.pushNotifications ?? true);
     const [searchQuery, setSearchQuery] = useState('');
 
     // Responsive sizing
@@ -26,42 +28,19 @@ export default function MedicationTrackerScreen() {
     const iconSize = isSmartWatch ? 20 : isMobile ? 24 : isTablet ? 28 : 32;
     const containerPadding = isSmartWatch ? 'px-3 py-4' : isMobile ? 'px-4 py-6' : isTablet ? 'px-8 py-8' : 'px-16 py-12';
 
-    const medications = [
-        { 
-            id: 1, 
-            name: "Amoxicillin", 
-            dosage: "500mg", 
-            frequency: "3 times daily", 
-            time: "8:00 AM", 
-            taken: true,
-            available: true,
-            color: "bg-blue-500"
-        },
-        { 
-            id: 2, 
-            name: "Vitamin D", 
-            dosage: "2000 IU", 
-            frequency: "Once daily", 
-            time: "9:00 AM", 
-            taken: false,
-            available: true,
-            color: "bg-orange-500"
-        },
-        { 
-            id: 3, 
-            name: "Blood Pressure Med", 
-            dosage: "10mg", 
-            frequency: "Once daily", 
-            time: "8:00 PM", 
-            taken: false,
-            available: false,
-            color: "bg-green-500"
-        }
-    ];
+    const today = new Date().toISOString().split('T')[0];
 
     const filteredMedications = medications.filter(med =>
         med.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    const handleMarkAsTaken = (medicationId: number, time: string) => {
+        markMedicationAsTaken(medicationId, today, time);
+    };
+
+    const isTaken = (medication: any, time: string) => {
+        return medication.taken[today]?.includes(time) ?? false;
+    };
 
     return (
         <>
@@ -138,9 +117,7 @@ export default function MedicationTrackerScreen() {
                             {filteredMedications.map((med) => (
                                 <View
                                     key={med.id}
-                                    className={`rounded-xl p-4 border-2 ${
-                                        med.taken ? 'bg-gray-50 border-gray-200' : 'bg-white border-blue-200'
-                                    }`}
+                                    className="rounded-xl p-4 border-2 bg-white border-blue-200"
                                 >
                                     <View className="flex-row items-center justify-between mb-3">
                                         <View className="flex-row items-center flex-1">
@@ -148,14 +125,10 @@ export default function MedicationTrackerScreen() {
                                                 <Ionicons name="medical" size={20} color="white" />
                                             </View>
                                             <View className="flex-1">
-                                                <Text className={`${textSize} font-bold ${
-                                                    med.taken ? 'text-gray-500 line-through' : 'text-gray-900'
-                                                }`}>
+                                                <Text className={`${textSize} font-bold text-gray-900`}>
                                                     {med.name}
                                                 </Text>
-                                                <Text className={`${textSize} ${
-                                                    med.taken ? 'text-gray-400' : 'text-gray-600'
-                                                } mt-1`}>
+                                                <Text className={`${textSize} text-gray-600 mt-1`}>
                                                     {med.dosage} • {med.frequency}
                                                 </Text>
                                                 <View className="flex-row items-center mt-2">
@@ -167,35 +140,46 @@ export default function MedicationTrackerScreen() {
                                                     <Text className={`${textSize} ml-1 ${
                                                         med.available ? 'text-green-600' : 'text-red-600'
                                                     }`}>
-                                                        {med.available ? 'Available' : 'Not Available'}
+                                                        {med.available ? 'Available' : 'Refill Needed'}
                                                     </Text>
                                                 </View>
                                             </View>
                                         </View>
-                                        {med.taken && (
-                                            <View className="bg-green-100 rounded-full p-2">
-                                                <Ionicons name="checkmark" size={20} color="#10B981" />
-                                            </View>
-                                        )}
                                     </View>
-                                    <View className="flex-row items-center justify-between">
-                                        <View className="flex-row items-center">
-                                            <Ionicons name="time" size={16} color="#6B7280" />
-                                            <Text className={`${textSize} text-gray-600 ml-2`}>
-                                                {med.time}
-                                            </Text>
-                                        </View>
-                                        {!med.taken && med.available && (
-                                            <TouchableOpacity
-                                                className="bg-blue-600 px-4 py-2 rounded-full flex-row items-center"
-                                                activeOpacity={0.7}
-                                            >
-                                                <Ionicons name="add" size={16} color="white" />
-                                                <Text className={`${textSize} text-white font-semibold ml-1`}>
-                                                    Add
-                                                </Text>
-                                            </TouchableOpacity>
-                                        )}
+                                    
+                                    {/* Time slots for medication */}
+                                    <View className="gap-2 mt-2">
+                                        {med.times.map((time, index) => {
+                                            const taken = isTaken(med, time);
+                                            return (
+                                                <View key={index} className="flex-row items-center justify-between">
+                                                    <View className="flex-row items-center">
+                                                        <Ionicons name="time" size={16} color="#6B7280" />
+                                                        <Text className={`${textSize} text-gray-600 ml-2`}>
+                                                            {time}
+                                                        </Text>
+                                                        {taken && (
+                                                            <View className="bg-green-100 rounded-full px-2 py-1 ml-2 flex-row items-center">
+                                                                <Ionicons name="checkmark" size={14} color="#10B981" />
+                                                                <Text className="text-xs text-green-600 ml-1">Taken</Text>
+                                                            </View>
+                                                        )}
+                                                    </View>
+                                                    {!taken && med.available && (
+                                                        <TouchableOpacity
+                                                            onPress={() => handleMarkAsTaken(med.id, time)}
+                                                            className="bg-blue-600 px-4 py-2 rounded-full flex-row items-center"
+                                                            activeOpacity={0.7}
+                                                        >
+                                                            <Ionicons name="checkmark" size={16} color="white" />
+                                                            <Text className={`${textSize} text-white font-semibold ml-1`}>
+                                                                Mark Taken
+                                                            </Text>
+                                                        </TouchableOpacity>
+                                                    )}
+                                                </View>
+                                            );
+                                        })}
                                     </View>
                                 </View>
                             ))}

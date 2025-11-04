@@ -1,16 +1,19 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Image, KeyboardAvoidingView, Platform, ScrollView, StatusBar, Text, TextInput, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { Alert, Image, KeyboardAvoidingView, Platform, ScrollView, StatusBar, Text, TextInput, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { useData } from '../../contexts/DataContext';
 
 import "../../global.css";
 
 export default function LoginScreen() {
     const router = useRouter();
     const { width } = useWindowDimensions();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const { login } = useData();
+    const [email, setEmail] = useState('john.doe@example.com'); // Pre-filled for testing
+    const [password, setPassword] = useState('password123'); // Pre-filled for testing
     const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     // Responsive sizing
     const isSmartWatch = width < 250;
@@ -27,10 +30,24 @@ export default function LoginScreen() {
     const maxWidth = isTablet || isDesktop || isTV ? 'max-w-md' : 'w-full';
 
     const handleLogin = async () => {
-        // TODO: Implement actual login logic
-        console.log('Login attempt:', { email, password });
-        // For now, just navigate to dashboard
-        router.replace('/dashboard' as any);
+        if (!email || !password) {
+            Alert.alert('Error', 'Please enter both email and password');
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            const success = await login(email, password);
+            if (success) {
+                router.replace('/dashboard' as any);
+            } else {
+                Alert.alert('Login Failed', 'Invalid credentials. Please try again.');
+            }
+        } catch (error) {
+            Alert.alert('Error', 'An error occurred during login. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const handleSignUp = () => {
@@ -141,9 +158,10 @@ export default function LoginScreen() {
                                     onPress={handleLogin}
                                     className="bg-blue-600 rounded-full py-4 sm:py-5 shadow-xl elevation-4 mb-4"
                                     activeOpacity={0.85}
+                                    disabled={isLoading}
                                 >
                                     <Text className={`${buttonTextSize} text-white text-center font-bold`}>
-                                        Sign In
+                                        {isLoading ? 'Signing In...' : 'Sign In'}
                                     </Text>
                                 </TouchableOpacity>
 
