@@ -1,8 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Animated, Image, ScrollView, StatusBar, Text, useWindowDimensions, View } from "react-native";
 import Footer from "../components/ui/footer";
+import { userService } from '../services/api/userService';
 
 import "../global.css";
 
@@ -10,22 +11,43 @@ export default function SplashScreen() {
     const router = useRouter();
     const { width, height } = useWindowDimensions();
     const fadeAnim = useRef(new Animated.Value(1)).current;
+    const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
-    // Auto-navigate to dashboard after 2 seconds with fade animation
+    // Check authentication and auto-navigate
     useEffect(() => {
-        const timer = setTimeout(() => {
-            // Fade out animation
-            Animated.timing(fadeAnim, {
-                toValue: 0,
-                duration: 500,
-                useNativeDriver: true,
-            }).start(() => {
-                // Navigate to dashboard after fade out
-                router.replace('/dashboard' as any);
-            });
-        }, 2000);
+        const checkAuthAndNavigate = async () => {
+            try {
+                // Check if user is logged in using secure storage
+                const isAuth = await userService.isAuthenticated();
+                
+                // Wait for 2 seconds (splash screen display time)
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Fade out animation
+                Animated.timing(fadeAnim, {
+                    toValue: 0,
+                    duration: 500,
+                    useNativeDriver: true,
+                }).start(() => {
+                    // Navigate based on authentication status
+                    if (isAuth) {
+                        // User is logged in, go to dashboard
+                        router.replace('/dashboard' as any);
+                    } else {
+                        // User not logged in, go to login
+                        router.replace('/login' as any);
+                    }
+                });
+            } catch (error) {
+                console.error('Error checking authentication:', error);
+                // On error, redirect to login to be safe
+                router.replace('/login' as any);
+            } finally {
+                setIsCheckingAuth(false);
+            }
+        };
 
-        return () => clearTimeout(timer);
+        checkAuthAndNavigate();
     }, [router, fadeAnim]);
 
     // Determine device type based on dimensions

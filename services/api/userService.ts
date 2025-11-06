@@ -2,12 +2,13 @@
  * User Service
  * 
  * This service handles all user-related API calls.
- * It provides a clean interface for user operations that can be easily
- * switched from local JSON to MongoDB in production.
+ * ALL data is fetched from MongoDB backend - NO local storage.
+ * Uses expo-secure-store for encrypted token storage only.
  */
 
 import { API_ENDPOINTS } from '../../constants/config';
 import { apiClient } from './client';
+import { secureStorage } from '../storage/secureStorage';
 import type {
     ApiResponse,
     LoginRequest,
@@ -17,7 +18,7 @@ import type {
 
 export const userService = {
   /**
-   * Login user
+   * Login user - stores token in secure encrypted storage
    */
   async login(credentials: LoginRequest): Promise<LoginResponse> {
     const response = await apiClient.post<LoginResponse>(
@@ -26,9 +27,13 @@ export const userService = {
     );
 
     if (response.success && response.data) {
-      // Store auth token
+      // Store auth token in encrypted secure storage
       if (response.data.token) {
-        apiClient.setAuthToken(response.data.token);
+        await apiClient.setAuthToken(response.data.token);
+        // Store minimal user data in secure storage (encrypted)
+        if (response.data.user) {
+          await secureStorage.saveUserData(response.data.user);
+        }
       }
       return response.data;
     }
@@ -40,29 +45,38 @@ export const userService = {
   },
 
   /**
-   * Logout user
+   * Logout user - clears all encrypted data
    */
   async logout(): Promise<ApiResponse<void>> {
-    apiClient.clearAuthToken();
+    // Clear all secure storage
+    await secureStorage.logout();
+    await apiClient.clearAuthToken();
     return await apiClient.post(API_ENDPOINTS.USER_LOGOUT, {});
   },
 
   /**
-   * Get current user
+   * Get current user from backend (MongoDB)
    */
   async getUser(): Promise<ApiResponse<User>> {
     return await apiClient.get<User>(API_ENDPOINTS.USER);
   },
 
   /**
-   * Update user information
+   * Update user information on backend (MongoDB)
    */
   async updateUser(updates: Partial<User>): Promise<ApiResponse<User>> {
-    return await apiClient.put<User>(API_ENDPOINTS.USER_UPDATE, { updates });
+    const response = await apiClient.put<User>(API_ENDPOINTS.USER_UPDATE, { updates });
+    
+    // Update secure storage if successful
+    if (response.success && response.data) {
+      await secureStorage.saveUserData(response.data);
+    }
+    
+    return response;
   },
 
   /**
-   * Register new user
+   * Register new user on backend (MongoDB)
    */
   async register(userData: Partial<User> & LoginRequest): Promise<LoginResponse> {
     const response = await apiClient.post<LoginResponse>(
@@ -71,6 +85,13 @@ export const userService = {
     );
 
     if (response.success && response.data) {
+      // Store auth token in encrypted secure storage
+      if (response.data.token) {
+        await apiClient.setAuthToken(response.data.token);
+        if (response.data.user) {
+          await secureStorage.saveUserData(response.data.user);
+        }
+      }
       return response.data;
     }
 
@@ -78,5 +99,12 @@ export const userService = {
       success: false,
       message: response.error || 'Registration failed',
     };
+  },
+
+  /**
+   * Check if user is authenticated
+   */
+  async isAuthenticated(): Promise<boolean> {
+    return await secureStorage.isAuthenticated();
   },
 };
