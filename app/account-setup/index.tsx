@@ -159,6 +159,7 @@ export default function AccountSetupScreen() {
                     <Ionicons name="lock-closed-outline" size={isSmartWatch ? 16 : 20} color="#6B7280" />
                     <TextInput
                         className={`flex-1 ml-3 ${textSize} text-gray-900`}
+                        style={{ outlineStyle: 'none' }}
                         placeholder="Create a password"
                         placeholderTextColor="#9CA3AF"
                         value={password}
@@ -185,6 +186,7 @@ export default function AccountSetupScreen() {
                     <Ionicons name="lock-closed-outline" size={isSmartWatch ? 16 : 20} color="#6B7280" />
                     <TextInput
                         className={`flex-1 ml-3 ${textSize} text-gray-900`}
+                        style={{ outlineStyle: 'none' }}
                         placeholder="Confirm your password"
                         placeholderTextColor="#9CA3AF"
                         value={confirmPassword}
@@ -219,7 +221,8 @@ export default function AccountSetupScreen() {
                     <Ionicons name="calendar-outline" size={isSmartWatch ? 16 : 20} color="#6B7280" />
                     <TextInput
                         className={`flex-1 ml-3 ${textSize} text-gray-900`}
-                        placeholder="MM/DD/YYYY"
+                        style={{ outlineStyle: 'none' }}
+                        placeholder="DD/MM/YYYY"
                         placeholderTextColor="#9CA3AF"
                         value={dateOfBirth}
                         onChangeText={setDateOfBirth}
@@ -264,6 +267,7 @@ export default function AccountSetupScreen() {
                     <Ionicons name="location-outline" size={isSmartWatch ? 16 : 20} color="#6B7280" className="mt-1" />
                     <TextInput
                         className={`flex-1 ml-3 ${textSize} text-gray-900`}
+                        style={{ outlineStyle: 'none' }}
                         placeholder="Enter your address"
                         placeholderTextColor="#9CA3AF"
                         value={address}
@@ -292,6 +296,7 @@ export default function AccountSetupScreen() {
                     <Ionicons name="person-add-outline" size={isSmartWatch ? 16 : 20} color="#6B7280" />
                     <TextInput
                         className={`flex-1 ml-3 ${textSize} text-gray-900`}
+                        style={{ outlineStyle: 'none' }}
                         placeholder="Emergency contact name"
                         placeholderTextColor="#9CA3AF"
                         value={emergencyContact}

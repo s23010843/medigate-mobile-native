@@ -10,8 +10,8 @@ export default function LoginScreen() {
     const router = useRouter();
     const { width } = useWindowDimensions();
     const { login } = useData();
-    const [email, setEmail] = useState('john.doe@example.com'); // Pre-filled for testing
-    const [password, setPassword] = useState('password123'); // Pre-filled for testing
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
