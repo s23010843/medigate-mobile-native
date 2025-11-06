@@ -15,7 +15,7 @@ The App Report feature allows users to submit feedback, report bugs, and suggest
 ## File Structure
 
 ```
-app/app-report/
+app/report/
   └── index.tsx                 # Main feedback form page
 
 services/api/
@@ -28,7 +28,7 @@ constants/
 ## Usage
 
 ### Accessing the App Report Page
-Users can navigate to `/app-report` to submit feedback.
+Users can navigate to `/report` to submit feedback.
 
 ### Data Storage
 - **Web**: Uses browser `localStorage`

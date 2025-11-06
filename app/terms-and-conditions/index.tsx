@@ -21,6 +21,8 @@ export default function TermsAndConditionsScreen() {
     const containerPadding = isSmartWatch ? 'px-3 py-4' : isMobile ? 'px-6 py-8' : isTablet ? 'px-12 py-12' : isDesktop ? 'px-24 py-16' : 'px-32 py-20';
     const maxWidth = isTablet || isDesktop || isTV ? 'max-w-4xl' : 'w-full';
 
+    const webUrl = "https://medigate.netlify.app";
+
     return (
         <>
             <Stack.Screen
@@ -157,11 +159,14 @@ export default function TermsAndConditionsScreen() {
                     <Text className={`${headingSize} font-bold text-gray-900 mb-3 sm:mb-4`}>
                         12. Contact Information
                     </Text>
-                    <Text className={`${textSize} text-gray-700 mb-8 sm:mb-12 leading-6 sm:leading-7`}>
-                        If you have any questions about these Terms of Service, please contact us at:{'\n\n'}
-                        Email: support@medigate.example.com{'\n'}
-                        Phone: 1-800-MEDIGATE{'\n'}
-                        Address: 123 Healthcare Ave, Medical City, MC 12345
+                    <Text className={`${textSize} text-gray-700 mb-4 leading-6 sm:leading-7`}>
+                        If you have any questions about these Terms of Service, please contact us:
+                    </Text>
+                    <Text className={`${textSize} text-blue-600 mb-2 leading-6 sm:leading-7`}>
+                        🌐 Website: {webUrl}
+                    </Text>
+                    <Text className={`${textSize} text-blue-600 mb-8 sm:mb-12 leading-6 sm:leading-7`}>
+                        📋 Report Issues: {webUrl}/report
                     </Text>
                 </View>
             </ScrollView>

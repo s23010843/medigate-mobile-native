@@ -11,11 +11,9 @@ export const IS_DEV = __DEV__;
 // API Configuration
 export const API_CONFIG = {
   // Base URL for API endpoints
-  // In development: use local JSON file
+  // In development: use 'local' for local JSON file or 'http://localhost:8888/api' for backend
   // In production: use your backend API URL
-  BASE_URL: process.env.EXPO_PUBLIC_API_URL === 'local' || !process.env.EXPO_PUBLIC_API_URL || IS_DEV
-    ? 'local' // Special flag for local JSON file
-    : process.env.EXPO_PUBLIC_API_URL,
+  BASE_URL: process.env.EXPO_PUBLIC_API_URL || 'local',
   
   // API version
   VERSION: 'v1',
@@ -29,12 +27,14 @@ export const API_CONFIG = {
 
 // Endpoint paths
 export const API_ENDPOINTS = {
-  // User endpoints
-  USER: '/user',
-  USER_UPDATE: '/user/update',
+  // Auth endpoints
   USER_LOGIN: '/auth/login',
   USER_LOGOUT: '/auth/logout',
   USER_REGISTER: '/auth/register',
+  
+  // User endpoints
+  USER: '/auth/user',
+  USER_UPDATE: '/auth/user/update',
   
   // Doctor endpoints
   DOCTORS: '/doctors',

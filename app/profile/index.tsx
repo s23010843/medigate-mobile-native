@@ -12,43 +12,47 @@ export default function ProfileScreen() {
     const { user } = useData();
 
     if (!user) {
-        return null; // or a loading screen
+        return (
+            <View className="flex-1 bg-gray-50 items-center justify-center">
+                <Text className="text-xl text-gray-600">Loading profile...</Text>
+            </View>
+        );
     }
 
     const profileSections = [
         {
             title: 'Personal Information',
             items: [
-                { icon: 'person', label: 'Full Name', value: user.fullName },
-                { icon: 'mail', label: 'Email', value: user.email },
-                { icon: 'call', label: 'Phone', value: user.phone },
-                { icon: 'calendar', label: 'Date of Birth', value: new Date(user.dateOfBirth).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) },
-                { icon: 'transgender', label: 'Gender', value: user.gender },
+                { icon: 'person', label: 'Full Name', value: user.fullName || 'Not specified' },
+                { icon: 'mail', label: 'Email', value: user.email || 'Not specified' },
+                { icon: 'call', label: 'Phone', value: user.phone || 'Not specified' },
+                { icon: 'calendar', label: 'Date of Birth', value: user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Not specified' },
+                { icon: 'transgender', label: 'Gender', value: user.gender || 'Not specified' },
             ]
         },
         {
             title: 'Medical Information',
             items: [
-                { icon: 'water', label: 'Blood Type', value: user.medicalInfo.bloodType },
-                { icon: 'fitness', label: 'Height', value: user.medicalInfo.height },
-                { icon: 'speedometer', label: 'Weight', value: user.medicalInfo.weight },
-                { icon: 'warning', label: 'Allergies', value: user.medicalInfo.allergies.join(', ') },
-                { icon: 'medical', label: 'Conditions', value: user.medicalInfo.chronicConditions.join(', ') },
+                { icon: 'water', label: 'Blood Type', value: user.medicalInfo?.bloodType || 'Not specified' },
+                { icon: 'fitness', label: 'Height', value: user.medicalInfo?.height || 'Not specified' },
+                { icon: 'speedometer', label: 'Weight', value: user.medicalInfo?.weight || 'Not specified' },
+                { icon: 'warning', label: 'Allergies', value: user.medicalInfo?.allergies?.length > 0 ? user.medicalInfo.allergies.join(', ') : 'None' },
+                { icon: 'medical', label: 'Conditions', value: user.medicalInfo?.chronicConditions?.length > 0 ? user.medicalInfo.chronicConditions.join(', ') : 'None' },
             ]
         },
         {
             title: 'Insurance Information',
             items: [
-                { icon: 'shield', label: 'Provider', value: user.medicalInfo.insuranceProvider },
-                { icon: 'card', label: 'Insurance ID', value: user.medicalInfo.insuranceId },
+                { icon: 'shield', label: 'Provider', value: user.medicalInfo?.insuranceProvider || 'Not specified' },
+                { icon: 'card', label: 'Insurance ID', value: user.medicalInfo?.insuranceId || 'Not specified' },
             ]
         },
         {
             title: 'Emergency Contact',
             items: [
-                { icon: 'person', label: 'Name', value: user.emergencyContact.name },
-                { icon: 'heart', label: 'Relationship', value: user.emergencyContact.relationship },
-                { icon: 'call', label: 'Phone', value: user.emergencyContact.phone },
+                { icon: 'person', label: 'Name', value: user.emergencyContact?.name || 'Not specified' },
+                { icon: 'heart', label: 'Relationship', value: user.emergencyContact?.relationship || 'Not specified' },
+                { icon: 'call', label: 'Phone', value: user.emergencyContact?.phone || 'Not specified' },
             ]
         },
     ];
@@ -74,13 +78,13 @@ export default function ProfileScreen() {
                     {/* Profile Picture & Basic Info */}
                     <View className="bg-white rounded-3xl p-6 shadow-lg elevation-4 mb-6 items-center">
                         <View className="w-24 h-24 rounded-full bg-blue-100 items-center justify-center mb-4">
-                            <Text className="text-5xl">{user.avatar}</Text>
+                            <Text className="text-5xl">{user.avatar || '👤'}</Text>
                         </View>
                         <Text className="text-2xl font-bold text-gray-900 mb-1">
-                            {user.fullName}
+                            {user.fullName || 'User'}
                         </Text>
                         <Text className="text-base text-gray-600 mb-4">
-                            Patient ID: #{user.id.toString().padStart(5, '0')}
+                            Patient ID: #{user.id ? user.id.toString().padStart(5, '0') : '00000'}
                         </Text>
                         <TouchableOpacity className="bg-blue-600 px-6 py-2 rounded-full">
                             <Text className="text-white font-semibold">

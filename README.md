@@ -303,8 +303,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Contact & Support
 
-- **Email**: support@medigate.example.com
-- **Phone**: 1-800-MEDIGATE
 - **GitHub**: [@s23010843](https://github.com/s23010843)
 
 ## 📄 Acknowledgments
@@ -316,12 +314,25 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📚 Additional Documentation
 
-- **[Architecture Documentation](./ARCHITECTURE.md)** - App architecture overview
-- **[API Integration Guide](./docs/API_INTEGRATION.md)** - Complete API architecture
-- **[Backend Setup Guide](./docs/BACKEND_SETUP.md)** - How to create backend API
-- **[Quick Reference](./docs/API_QUICK_REFERENCE.md)** - Quick start guide
-- **[Migration Summary](./docs/MIGRATION_SUMMARY.md)** - Implementation details
-- **[Data Integration](./docs/DATA_INTEGRATION.md)** - Data flow documentation
+**⭐ NEW: [COMPLETION_SUMMARY.md](./COMPLETION_SUMMARY.md)** - Frontend restructuring overview and changes
+
+### Core Documentation
+- **[Folder Structure Guide](./docs/FOLDER_STRUCTURE.md)** - **📂 START HERE** - Complete folder structure breakdown (800+ lines)
+- **[Architecture Documentation](./docs/ARCHITECTURE.md)** - App architecture overview and design patterns
+- **[Architecture Diagrams](./docs/ARCHITECTURE_DIAGRAMS.md)** - Visual diagrams and system flows
+
+### API & Backend
+- **[API Integration Guide](./docs/API_INTEGRATION.md)** - Complete API architecture and service layer
+- **[Backend Setup Guide](./docs/BACKEND_SETUP.md)** - How to create and connect backend API
+- **[Quick Reference](./docs/API_QUICK_REFERENCE.md)** - Quick start guide for API integration
+- **[Data Integration](./docs/DATA_INTEGRATION.md)** - Data flow and state management
+
+### Implementation & Features
+- **[Migration Summary](./docs/MIGRATION_SUMMARY.md)** - Local to remote API migration
+- **[Implementation Complete](./docs/IMPLEMENTATION_COMPLETE.md)** - Feature implementation summary
+- **[App Report Feature](./docs/APP_REPORT_FEATURE.md)** - App reporting functionality
+- **[Feedback Backend Setup](./docs/FEEDBACK_BACKEND_SETUP.md)** - Feedback system setup
+- **[Development Checklist](./docs/CHECKLIST.md)** - Development task checklist
 
 ---
 
