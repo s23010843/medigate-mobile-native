@@ -5,6 +5,7 @@
  * Stores data in memory and optionally syncs to MongoDB in production mode.
  */
 
+import { Alert, Platform } from 'react-native';
 import type { ApiResponse, FeedbackSubmission } from './types';
 
 const FEEDBACK_STORAGE_KEY = 'medigate_feedback';
@@ -13,6 +14,40 @@ const MONGODB_API_URL = process.env.EXPO_PUBLIC_MONGODB_API_URL || '';
 // In-memory storage as fallback
 let feedbackCache: FeedbackSubmission[] = [];
 
+/**
+ * Check if localStorage is available and accessible
+ */
+const isLocalStorageAvailable = (): boolean => {
+  try {
+    if (typeof window === 'undefined' || !window.localStorage) {
+      return false;
+    }
+    // Test if we can actually access it
+    const testKey = '__storage_test__';
+    localStorage.setItem(testKey, 'test');
+    localStorage.removeItem(testKey);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
+
+/**
+ * Show user-friendly error message for storage issues
+ */
+const showStorageWarning = (): void => {
+  if (Platform.OS === 'web') {
+    Alert.alert(
+      'Storage Notice',
+      'Your feedback will be saved temporarily. To ensure it\'s permanently saved:\n\n' +
+      '• Enable cookies and site data\n' +
+      '• Use normal browsing mode (not private/incognito)\n' +
+      '• Check browser privacy settings',
+      [{ text: 'OK' }]
+    );
+  }
+};
+
 class FeedbackService {
   /**
    * Get all feedback from storage
@@ -20,11 +55,11 @@ class FeedbackService {
   private async getLocalFeedback(): Promise<FeedbackSubmission[]> {
     try {
       // Try localStorage for web
-      if (typeof window !== 'undefined' && window.localStorage) {
+      if (typeof window !== 'undefined' && window.localStorage && isLocalStorageAvailable()) {
         const data = localStorage.getItem(FEEDBACK_STORAGE_KEY);
         return data ? JSON.parse(data) : [];
       }
-      // Return cached data for native/non-browser environments
+      // Return cached data for native/non-browser environments or when localStorage is unavailable
       return feedbackCache;
     } catch (error) {
       console.error('[Feedback] Error reading storage:', error);
@@ -42,11 +77,19 @@ class FeedbackService {
       
       // Try localStorage for web
       if (typeof window !== 'undefined' && window.localStorage) {
+        if (!isLocalStorageAvailable()) {
+          console.warn('[Feedback] localStorage not available, using memory cache only');
+          showStorageWarning();
+          return;
+        }
         localStorage.setItem(FEEDBACK_STORAGE_KEY, JSON.stringify(feedback));
       }
     } catch (error) {
       console.error('[Feedback] Error saving to storage:', error);
-      throw error;
+      // Don't throw - we have the in-memory cache
+      if (error instanceof Error && error.name === 'SecurityError') {
+        showStorageWarning();
+      }
     }
   }
 
@@ -223,7 +266,7 @@ class FeedbackService {
   async clearAllFeedback(): Promise<ApiResponse<void>> {
     try {
       feedbackCache = [];
-      if (typeof window !== 'undefined' && window.localStorage) {
+      if (typeof window !== 'undefined' && window.localStorage && isLocalStorageAvailable()) {
         localStorage.removeItem(FEEDBACK_STORAGE_KEY);
       }
       return {
@@ -231,9 +274,12 @@ class FeedbackService {
         message: 'All feedback cleared',
       };
     } catch (error) {
+      console.error('[Feedback] Error clearing feedback:', error);
+      // Still clear the cache even if localStorage fails
+      feedbackCache = [];
       return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Failed to clear feedback',
+        success: true,
+        message: 'Feedback cleared from memory',
       };
     }
   }
