@@ -28,49 +28,49 @@ export const API_CONFIG = {
 // Endpoint paths
 export const API_ENDPOINTS = {
   // Auth endpoints
-  USER_LOGIN: '/auth/login',
-  USER_LOGOUT: '/auth/logout',
-  USER_REGISTER: '/auth/register',
+  USER_LOGIN: '/api/auth/login',
+  USER_LOGOUT: '/api/auth/logout',
+  USER_REGISTER: '/api/auth/register',
   
   // User endpoints
-  USER: '/auth/user',
-  USER_UPDATE: '/auth/user/update',
+  USER: '/api/auth/user',
+  USER_UPDATE: '/api/auth/user/update',
   
   // Doctor endpoints
-  DOCTORS: '/doctors',
-  DOCTOR_BY_ID: '/doctors/:id',
+  DOCTORS: '/api/doctors',
+  DOCTOR_BY_ID: '/api/doctors/:id',
   
   // Appointment endpoints
-  APPOINTMENTS: '/appointments',
-  APPOINTMENT_BY_ID: '/appointments/:id',
-  APPOINTMENT_CREATE: '/appointments/create',
-  APPOINTMENT_UPDATE: '/appointments/:id',
-  APPOINTMENT_DELETE: '/appointments/:id',
+  APPOINTMENTS: '/api/appointments',
+  APPOINTMENT_BY_ID: '/api/appointments/:id',
+  APPOINTMENT_CREATE: '/api/appointments/create',
+  APPOINTMENT_UPDATE: '/api/appointments/:id',
+  APPOINTMENT_DELETE: '/api/appointments/:id',
   
   // Medication endpoints
-  MEDICATIONS: '/medications',
-  MEDICATION_BY_ID: '/medications/:id',
-  MEDICATION_MARK_TAKEN: '/medications/:id/taken',
+  MEDICATIONS: '/api/medications',
+  MEDICATION_BY_ID: '/api/medications/:id',
+  MEDICATION_MARK_TAKEN: '/api/medications/:id/taken',
   
   // Health records endpoints
-  HEALTH_RECORDS: '/health-records',
-  HEALTH_RECORD_BY_ID: '/health-records/:id',
+  HEALTH_RECORDS: '/api/health-records',
+  HEALTH_RECORD_BY_ID: '/api/health-records/:id',
   
   // Notification endpoints
-  NOTIFICATIONS: '/notifications',
-  NOTIFICATION_MARK_READ: '/notifications/:id/read',
-  NOTIFICATION_MARK_ALL_READ: '/notifications/read-all',
+  NOTIFICATIONS: '/api/notifications',
+  NOTIFICATION_MARK_READ: '/api/notifications/:id/read',
+  NOTIFICATION_MARK_ALL_READ: '/api/notifications/read-all',
   
   // Pharmacy endpoints
-  PHARMACIES: '/pharmacies',
-  PHARMACY_BY_ID: '/pharmacies/:id',
+  PHARMACIES: '/api/pharmacies',
+  PHARMACY_BY_ID: '/api/pharmacies/:id',
   
   // Emergency contacts
-  EMERGENCY_CONTACTS: '/emergency-contacts',
+  EMERGENCY_CONTACTS: '/api/emergency-contacts',
   
   // Feedback endpoints
-  FEEDBACK_SUBMIT: '/feedback/submit',
-  FEEDBACK_LIST: '/feedback',
+  FEEDBACK_SUBMIT: '/api/feedback/submit',
+  FEEDBACK_LIST: '/api/feedback',
 };
 
 // Storage keys for AsyncStorage

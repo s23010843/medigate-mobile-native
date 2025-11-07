@@ -5,7 +5,7 @@
  */
 
 import * as SecureStore from 'expo-secure-store';
-import { Platform } from 'react-native';
+import { Platform, Alert } from 'react-native';
 
 // Storage keys
 const STORAGE_KEYS = {
@@ -14,6 +14,46 @@ const STORAGE_KEYS = {
   REFRESH_TOKEN: 'refresh_token',
   BIOMETRIC_ENABLED: 'biometric_enabled',
 } as const;
+
+/**
+ * Check if localStorage is available and accessible
+ */
+const isLocalStorageAvailable = (): boolean => {
+  try {
+    if (typeof window === 'undefined' || !window.localStorage) {
+      return false;
+    }
+    // Test if we can actually access it
+    const testKey = '__storage_test__';
+    localStorage.setItem(testKey, 'test');
+    localStorage.removeItem(testKey);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
+
+/**
+ * Show user-friendly error message for storage issues
+ */
+const showStorageError = (operation: string): void => {
+  if (Platform.OS === 'web') {
+    Alert.alert(
+      'Storage Access Denied',
+      'Unable to save data. Please check your browser settings:\n\n' +
+      '• Allow cookies and site data\n' +
+      '• Disable private/incognito mode\n' +
+      '• Check browser privacy settings',
+      [{ text: 'OK' }]
+    );
+  } else {
+    Alert.alert(
+      'Storage Error',
+      `Unable to ${operation} data. Please try again or restart the app.`,
+      [{ text: 'OK' }]
+    );
+  }
+};
 
 /**
  * Secure Storage Service
@@ -26,7 +66,12 @@ class SecureStorageService {
   async setItem(key: string, value: string): Promise<void> {
     try {
       if (Platform.OS === 'web') {
-        // Fallback for web (use localStorage with warning)
+        // Check if localStorage is available
+        if (!isLocalStorageAvailable()) {
+          console.error('localStorage is not available');
+          showStorageError('save');
+          throw new Error('Storage access denied. Please check browser settings.');
+        }
         console.warn('SecureStore not available on web, using localStorage');
         localStorage.setItem(key, value);
         return;
@@ -34,6 +79,10 @@ class SecureStorageService {
       await SecureStore.setItemAsync(key, value);
     } catch (error) {
       console.error('Error saving to secure storage:', error);
+      if (error instanceof Error && error.message.includes('Storage access denied')) {
+        throw error; // Re-throw our custom error
+      }
+      showStorageError('save');
       throw error;
     }
   }
@@ -44,12 +93,17 @@ class SecureStorageService {
   async getItem(key: string): Promise<string | null> {
     try {
       if (Platform.OS === 'web') {
-        // Fallback for web
+        // Check if localStorage is available
+        if (!isLocalStorageAvailable()) {
+          console.error('localStorage is not available');
+          return null;
+        }
         return localStorage.getItem(key);
       }
       return await SecureStore.getItemAsync(key);
     } catch (error) {
       console.error('Error reading from secure storage:', error);
+      // Don't show alert for read operations, just return null
       return null;
     }
   }
@@ -60,13 +114,18 @@ class SecureStorageService {
   async removeItem(key: string): Promise<void> {
     try {
       if (Platform.OS === 'web') {
+        // Check if localStorage is available
+        if (!isLocalStorageAvailable()) {
+          console.error('localStorage is not available');
+          return; // Silently fail for remove operations
+        }
         localStorage.removeItem(key);
         return;
       }
       await SecureStore.deleteItemAsync(key);
     } catch (error) {
       console.error('Error removing from secure storage:', error);
-      throw error;
+      // Silently fail for remove operations
     }
   }
 
@@ -147,6 +206,13 @@ class SecureStorageService {
    */
   async getRefreshToken(): Promise<string | null> {
     return await this.getItem(STORAGE_KEYS.REFRESH_TOKEN);
+  }
+
+  /**
+   * Remove refresh token
+   */
+  async removeRefreshToken(): Promise<void> {
+    await this.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
   }
 
   /**
